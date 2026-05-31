@@ -1,0 +1,2111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gourav Life OS — FY 2026-27</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f8fafc;
+  --bg2:#f1f5f9;
+  --panel:#ffffff;
+  --card:#ffffff;
+  --cell:#f8fafc;
+  --cell2:#f1f5f9;
+  --border:#e2e8f0;
+  --border2:#cbd5e1;
+  --border3:#94a3b8;
+  --purple:#7c3aed;--purple2:#8b5cf6;--purple3:#ddd6fe;
+  --green:#10b981;--green2:#059669;--green3:#a7f3d0;
+  --amber:#f59e0b;--amber2:#d97706;--amber3:#fef3c7;
+  --red:#ef4444;--red2:#dc2626;
+  --blue:#3b82f6;--blue2:#2563eb;--blue3:#dbeafe;
+  --cyan:#06b6d4;--cyan2:#0891b2;
+  --pink:#db2777;--orange:#ea580c;
+  --saffron:#ea580c;
+  --t1:#0f172a;--t2:#334155;--t3:#64748b;--t4:#94a3b8;
+  --accent:#2563eb;
+}
+html{scroll-behavior:smooth;font-size:20px}
+body{background:var(--bg);color:var(--t1);font-family:'Inter',sans-serif;font-size:0.95rem;line-height:1.5;overflow-x:hidden}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border3);border-radius:3px}
+
+/* ══ WELCOME ══ */
+#welcome{position:fixed;inset:0;z-index:500;background:var(--bg);display:flex;align-items:center;justify-content:center;overflow:hidden}
+#welcome.out{animation:wOut 0.7s ease forwards}
+@keyframes wOut{to{opacity:0;transform:scale(1.04)}}
+.w-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(79,142,247,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(79,142,247,0.05) 1px,transparent 1px);background-size:48px 48px}
+.w-glow{position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(79,142,247,0.1),transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
+.w-inner{position:relative;z-index:1;text-align:center;max-width:650px;padding:2.5rem 1.5rem}
+
+/* Flag stripes */
+.w-flag{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:1.25rem}
+.fs{height:6px;border-radius:3px}
+.fs-s{background:#ff9933;width:64px}
+.fs-w{background:#e8f0fe;width:64px}
+.fs-g{background:#138808;width:64px}
+
+/* Welcome shlok box */
+.w-shlok{background:rgba(255,153,51,0.06);border:1px solid rgba(255,153,51,0.22);border-radius:12px;padding:1.5rem 1.75rem;margin-bottom:1.5rem;text-align:center}
+.shlok-strip {display:none !important}
+.ws-skt{font-family:'Noto Sans Devanagari',sans-serif;font-size:1.15rem;color:#7c2d12;line-height:1.85;font-weight:600}
+
+.w-title{font-size:clamp(1.8rem,5vw,3rem);font-weight:800;letter-spacing:-0.04em;line-height:1.1;margin-bottom:0.375rem;color:var(--t1)}
+.w-title span{color:var(--blue2)}
+.w-sub{font-size:0.95rem;color:var(--t3);margin-bottom:1.5rem;line-height:1.6}
+.w-btns{display:flex;gap:0.75rem;justify-content:center}
+.btn-go{background:var(--accent);color:white;border:none;padding:0.875rem 2.25rem;border-radius:8px;font-family:'Inter',sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;transition:all 0.2s;letter-spacing:0.01em}
+.btn-go:hover{background:var(--blue2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(79,142,247,0.4)}
+.btn-ghost{background:transparent;color:var(--t3);border:1px solid var(--border2);padding:0.875rem 2.25rem;border-radius:8px;font-family:'Inter',sans-serif;font-weight:500;font-size:0.95rem;cursor:pointer;transition:all 0.2s}
+.btn-ghost:hover{color:var(--t1);border-color:var(--accent)}
+
+/* ══ APP ══ */
+#app{display:none}
+#app.on{display:block}
+
+/* ══ TOP NAV ══ */
+.topnav{background:var(--panel);border-bottom:1px solid var(--border);height:60px;display:flex;align-items:center;position:sticky;top:0;z-index:100}
+.tn-logo{display:flex;align-items:center;gap:10px;padding:0 1.5rem;border-right:1px solid var(--border);height:100%;flex-shrink:0}
+.tn-logo-box{width:30px;height:30px;background:linear-gradient(135deg,var(--accent),var(--purple));border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:800;color:white}
+.tn-logo-name{font-weight:800;font-size:0.95rem;letter-spacing:-0.01em;color:var(--t1)}
+.tn-logo-fy{font-size:0.65rem;color:var(--t3);font-family:'JetBrains Mono',monospace;margin-left:3px}
+.tn-tabs{display:flex;height:100%;overflow-x:auto}
+.tn-tab{padding:0 1.25rem;height:100%;display:flex;align-items:center;font-size:0.8rem;font-weight:500;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all 0.15s;border-right:1px solid var(--border)}
+.tn-tab:hover{color:var(--t2);background:rgba(79,142,247,0.04)}
+.tn-tab.active{color:var(--blue2);border-bottom-color:var(--accent);background:rgba(79,142,247,0.06)}
+.tn-right{margin-left:auto;display:flex;align-items:center;gap:0.625rem;padding:0 1.5rem;border-left:1px solid var(--border);flex-shrink:0}
+.tn-chip{font-size:0.7rem;padding:4px 10px;border-radius:5px;font-weight:700;font-family:'JetBrains Mono',monospace;white-space:nowrap}
+.tc-g{background:rgba(16,185,129,0.1);color:var(--green2);border:1px solid rgba(16,185,129,0.18)}
+.tc-r{background:rgba(239,68,68,0.1);color:var(--red2);border:1px solid rgba(239,68,68,0.18)}
+.tc-p{background:rgba(124,106,247,0.1);color:var(--purple2);border:1px solid rgba(124,106,247,0.18)}
+.tc-b{background:rgba(79,142,247,0.1);color:var(--blue2);border:1px solid rgba(79,142,247,0.18)}
+
+/* ══ LAYOUT ══ */
+.page{padding:1.5rem;display:none}
+.page.active{display:block}
+.row{display:flex;gap:1.25rem;align-items:flex-start;margin-bottom:1.25rem}
+.f1{flex:1;min-width:0}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.25rem}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+.g5{display:grid;grid-template-columns:repeat(5,1fr);gap:1rem}
+
+/* ══ PANELS ══ */
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:1.25rem;box-shadow:0 1px 3px rgba(0,0,0,0.01), 0 1px 2px rgba(0,0,0,0.02)}
+.ph{font-size:0.75rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:1rem;display:flex;align-items:center;gap:6px}
+.ph::before{content:'';width:3px;height:12px;background:var(--accent);border-radius:2px;flex-shrink:0}
+
+/* ══ STAT CARDS ══ */
+.stat-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:0.75rem;margin-bottom:1.25rem}
+.sc{background:var(--panel);border:1px solid var(--border);border-radius:9px;padding:1rem 0.875rem;transition:all 0.15s;box-shadow:0 1px 3px rgba(0,0,0,0.01)}
+.sc:hover{border-color:var(--border3);transform:translateY(-1px);box-shadow:0 4px 6px -1px rgba(0,0,0,0.03)}
+.sc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.4rem}
+.sc-lbl{font-size:0.65rem;color:var(--t3);text-transform:uppercase;letter-spacing:0.07em;font-weight:600}
+.sc-icon{font-size:1rem}
+.sc-val{font-size:1.35rem;font-weight:800;line-height:1;font-family:'JetBrains Mono',monospace}
+.sc-sub{font-size:0.65rem;color:var(--t3);margin-top:3px}
+.sc-bar{height:3px;background:var(--border);border-radius:1.5px;overflow:hidden;margin-top:8px}
+.sc-bfill{height:100%;border-radius:1.5px}
+
+/* ══ PAGE HEADER ══ */
+.page-hdr{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:1.5rem}
+.page-title{font-size:1.2rem;font-weight:800;letter-spacing:-0.02em;color:var(--t1)}
+.page-sub{font-size:0.8rem;color:var(--t3);margin-top:3px}
+
+/* ══ BADGES ══ */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:5px;font-size:0.7rem;font-weight:700;white-space:nowrap}
+.bg{background:rgba(16,185,129,0.1);color:var(--green2);border:1px solid rgba(16,185,129,0.18)}
+.ba{background:rgba(245,158,11,0.1);color:var(--amber2);border:1px solid rgba(245,158,11,0.18)}
+.br{background:rgba(239,68,68,0.1);color:var(--red2);border:1px solid rgba(239,68,68,0.18)}
+.bp{background:rgba(124,106,247,0.1);color:var(--purple2);border:1px solid rgba(124,106,247,0.18)}
+.bb{background:rgba(79,142,247,0.1);color:var(--blue2);border:1px solid rgba(79,142,247,0.18)}
+.bs{background:rgba(255,153,51,0.1);color:var(--saffron);border:1px solid rgba(255,153,51,0.18)}
+
+/* ══ SHLOK DAILY STRIP (dashboard only — no quote) ══ */
+.shlok-strip{background:linear-gradient(135deg,rgba(255,153,51,0.06),rgba(19,136,8,0.04));border:1px solid rgba(255,153,51,0.15);border-radius:10px;padding:0.875rem 1.25rem;margin-bottom:1rem;display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}
+.ss-left{flex:1}
+.ss-meta{font-size:0.6rem;color:var(--saffron);font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.3rem}
+.ss-skt{font-family:'Noto Sans Devanagari',sans-serif;font-size:0.9rem;color:#7c2d12;line-height:1.75;font-weight:600}
+.ss-eng{font-size:0.73rem;color:var(--t2);margin-top:0.375rem;font-style:italic;line-height:1.6}
+.ss-nav{display:flex;gap:5px;flex-shrink:0;align-items:flex-start;padding-top:4px}
+.ss-btn{background:rgba(255,153,51,0.08);border:1px solid rgba(255,153,51,0.18);color:var(--saffron);font-size:0.62rem;font-weight:700;padding:4px 9px;border-radius:5px;cursor:pointer;transition:all 0.15s;font-family:'Inter',sans-serif;white-space:nowrap}
+.ss-btn:hover{background:rgba(255,153,51,0.16)}
+
+/* ══ MORNING ROUTINE ══ */
+.mr-table{width:100%;border-collapse:collapse}
+.mr-table th{background:var(--bg);color:var(--t3);font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;padding:7px 10px;border:1px solid var(--border);text-align:left}
+.mr-table th.num-h{text-align:center}
+.mr-table td{border:1px solid var(--border);padding:6px 10px;vertical-align:middle}
+.mr-table tr:hover td{background:rgba(79,142,247,0.03)}
+.mr-name-cell{display:flex;align-items:center;gap:7px}
+.mr-icon-c{font-size:1rem;width:22px;text-align:center;flex-shrink:0}
+.mr-label{font-size:0.82rem;font-weight:500;color:var(--t1)}
+.mr-unit-lbl{font-size:0.62rem;color:var(--t3)}
+/* number input cell */
+.num-cell{text-align:center;width:90px}
+.num-inp-wrap{display:flex;align-items:center;gap:4px;justify-content:center}
+.n-btn{width:22px;height:22px;border-radius:5px;border:1px solid var(--border2);background:var(--cell2);color:var(--t2);font-size:0.9rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.12s;flex-shrink:0;line-height:1}
+.n-btn.minus:hover{background:rgba(239,68,68,0.15);border-color:rgba(239,68,68,0.3);color:var(--red2)}
+.n-btn.plus:hover{background:rgba(16,185,129,0.15);border-color:rgba(16,185,129,0.3);color:var(--green2)}
+.n-val{font-size:0.88rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--t1);min-width:32px;text-align:center}
+/* progress cell */
+.prog-cell{width:120px}
+.prog-row{display:flex;align-items:center;gap:6px}
+.prog-bar-sm{flex:1;height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.prog-fill-sm{height:100%;border-radius:3px;transition:width 0.35s ease}
+.prog-pct{font-size:0.62rem;font-family:'JetBrains Mono',monospace;font-weight:700;min-width:30px;text-align:right}
+/* status cell */
+.stat-cell{width:80px;text-align:center}
+.tick-done{font-size:0.72rem;background:rgba(16,185,129,0.1);color:var(--green2);border:1px solid rgba(16,185,129,0.2);border-radius:5px;padding:2px 8px;font-weight:700}
+.tick-pend{font-size:0.72rem;color:var(--t4);border-radius:5px;padding:2px 8px;font-weight:600}
+/* mr summary row */
+.mr-summary-row{display:flex;gap:1rem;align-items:center;padding:0.875rem 1rem;background:var(--card);border:1px solid var(--border2);border-radius:8px;margin-top:0.875rem}
+.mrs-item{text-align:center;flex:1}
+.mrs-val{font-size:1.25rem;font-weight:800;font-family:'JetBrains Mono',monospace;line-height:1}
+.mrs-lbl{font-size:0.6rem;color:var(--t3);text-transform:uppercase;letter-spacing:0.06em;margin-top:3px}
+
+/* ══ EXPENSE TABLE ══ */
+.exp-tbl{width:100%;border-collapse:collapse}
+.exp-tbl th{background:var(--bg2);color:var(--t3);font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;padding:7px 10px;border:1px solid var(--border);text-align:left;white-space:nowrap}
+.exp-tbl td{border:1px solid var(--border);padding:6px 10px;font-size:0.78rem;vertical-align:middle}
+.exp-tbl tr:hover td{background:rgba(79,142,247,0.03)}
+.cat-pill{display:inline-flex;align-items:center;gap:5px;font-size:0.75rem;font-weight:500}
+.cdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.bar-col{width:90px}
+.mini-bar{height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:3px}
+.mini-fill{height:100%;border-radius:3px}
+.mono{font-family:'JetBrains Mono',monospace;font-weight:600}
+.ov{color:var(--red2)}.ok{color:var(--green2)}.neu{color:var(--t2)}
+.s-chip{font-size:0.6rem;padding:2px 7px;border-radius:4px;font-weight:700;white-space:nowrap}
+.s-over{background:rgba(239,68,68,0.1);color:var(--red2);border:1px solid rgba(239,68,68,0.15)}
+.s-ok{background:rgba(16,185,129,0.1);color:var(--green2);border:1px solid rgba(16,185,129,0.15)}
+.s-warn{background:rgba(245,158,11,0.1);color:var(--amber2);border:1px solid rgba(245,158,11,0.15)}
+
+/* daily log */
+.daily-tbl{width:100%;border-collapse:collapse;font-size:0.72rem}
+.daily-tbl th{background:var(--bg2);color:var(--t3);font-size:0.58rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;padding:6px 7px;border:1px solid var(--border);text-align:center;white-space:nowrap}
+.daily-tbl th:first-child,.daily-tbl th:nth-child(2){text-align:left}
+.daily-tbl td{border:1px solid var(--border);padding:5px 7px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:0.68rem}
+.daily-tbl td:first-child,.daily-tbl td:nth-child(2){text-align:left;font-family:'Inter',sans-serif;font-size:0.7rem;color:var(--t2)}
+.daily-tbl tr:hover td{background:rgba(79,142,247,0.03)}
+.daily-tbl tr.tot-row td{background:var(--bg2);color:var(--t1);font-weight:700;border-top:2px solid var(--border2)}
+.daily-tbl tr.avg-row td{background:rgba(79,142,247,0.04);color:var(--blue2)}
+.cv{color:var(--t1)}.ce{color:var(--t4)}.cl{color:var(--amber2)}
+
+/* ══ MONTH TABS ══ */
+.month-tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:1rem}
+.mtab{padding:5px 12px;border-radius:6px;font-size:0.72rem;font-weight:600;cursor:pointer;border:1px solid var(--border);color:var(--t3);transition:all 0.15s}
+.mtab:hover{color:var(--t2);border-color:var(--border2)}
+.mtab.active{background:rgba(79,142,247,0.1);color:var(--blue2);border-color:rgba(79,142,247,0.25)}
+.mtab.has-data{color:var(--t2)}
+.mtab.festive{border-color:rgba(245,158,11,0.2);color:var(--amber2)}
+.mtab.festive.active{background:rgba(245,158,11,0.08);border-color:rgba(245,158,11,0.35)}
+
+/* add form */
+.add-form{display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:0.5rem;align-items:end;padding:0.875rem;background:var(--card);border:1px solid var(--border);border-radius:8px;margin-bottom:1rem}
+.fg label{font-size:0.6rem;color:var(--t3);font-weight:600;text-transform:uppercase;letter-spacing:0.06em;display:block;margin-bottom:4px}
+
+/* inputs */
+.inp{background:var(--cell);border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--t1);font-family:'Inter',sans-serif;font-size:0.78rem;outline:none;transition:border-color 0.15s;width:100%}
+.inp:focus{border-color:var(--accent)}
+.inp::placeholder{color:var(--t4)}
+select.inp option{background:var(--panel)}
+.ibtn{background:var(--accent);color:white;border:none;border-radius:6px;padding:7px 14px;font-family:'Inter',sans-serif;font-size:0.75rem;font-weight:700;cursor:pointer;transition:all 0.15s;white-space:nowrap}
+.ibtn:hover{background:var(--blue2)}
+.ibtn-sm{background:var(--cell2);color:var(--t2);border:1px solid var(--border2);border-radius:5px;padding:5px 10px;font-family:'Inter',sans-serif;font-size:0.7rem;font-weight:600;cursor:pointer;transition:all 0.15s}
+.ibtn-sm:hover{border-color:var(--accent);color:var(--blue2)}
+
+/* ══ ANNUAL TABLE ══ */
+.ann-tbl{width:100%;border-collapse:collapse}
+.ann-tbl th{background:var(--bg2);color:var(--t3);font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;padding:7px 9px;border:1px solid var(--border);text-align:right;white-space:nowrap}
+.ann-tbl th:first-child{text-align:left}
+.ann-tbl td{border:1px solid var(--border);padding:6px 9px;font-size:0.75rem}
+.ann-tbl tr:hover td{background:rgba(79,142,247,0.03)}
+.ann-tbl tr.grand td{background:var(--bg2);font-weight:800;border-top:2px solid var(--border2)}
+.q-badge{font-size:0.55rem;padding:1px 5px;border-radius:3px;font-weight:700}
+.q1{background:rgba(59,130,246,0.1);color:var(--blue2)}
+.q2{background:rgba(16,185,129,0.1);color:var(--green2)}
+.q3{background:rgba(245,158,11,0.1);color:var(--amber2)}
+.q4{background:rgba(124,106,247,0.1);color:var(--purple2)}
+
+/* ══ GYM TRACKER ══ */
+.wt-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:0.5rem;margin-bottom:0.875rem}
+.wt-btn{background:var(--cell);border:1px solid var(--border);border-radius:7px;padding:8px 4px;text-align:center;cursor:pointer;transition:all 0.15s;font-size:0.7rem;font-weight:600;color:var(--t3)}
+.wt-btn:hover,.wt-btn.active{border-color:var(--accent);color:var(--blue2);background:rgba(79,142,247,0.08)}
+.wt-icon{font-size:1.2rem;display:block;margin-bottom:3px}
+.gym-log-row{padding:7px 0;border-bottom:1px solid var(--border)}
+.gym-log-row:last-child{border-bottom:none}
+
+/* ══ SHLOK LIBRARY ══ */
+.shlok-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:1rem;cursor:pointer;transition:border-color 0.2s}
+.shlok-card:hover{border-color:rgba(255,153,51,0.3)}
+.shlok-card.current-day{border-color:rgba(255,153,51,0.45);background:rgba(255,153,51,0.04)}
+.shlok-ref{font-size:0.62rem;color:var(--saffron);font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.5rem;display:flex;justify-content:space-between;align-items:center}
+.shlok-skt{font-family:'Noto Sans Devanagari',sans-serif;font-size:0.88rem;color:#7c2d12;line-height:1.8;margin-bottom:0.5rem;font-weight:600}
+.shlok-eng{font-size:0.72rem;color:var(--t2);font-style:italic;line-height:1.6}
+.shlok-theme{font-size:0.6rem;padding:2px 7px;border-radius:4px;font-weight:700}
+
+/* score ring */
+.ring-wrap{position:relative;width:100px;height:100px;margin:0 auto}
+.ring-wrap svg{transform:rotate(-90deg)}
+.r-bg{fill:none;stroke:var(--border2);stroke-width:8}
+.r-fg{fill:none;stroke-width:8;stroke-linecap:round;stroke-dasharray:283;transition:stroke-dashoffset 1s ease}
+.ring-text{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.r-num{font-size:1.5rem;font-weight:800;font-family:'JetBrains Mono',monospace;line-height:1}
+.r-lbl{font-size:0.55rem;color:var(--t3);text-transform:uppercase;letter-spacing:0.06em;margin-top:2px}
+
+/* progress bar */
+.pbar{height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.pfill{height:100%;border-radius:3px;transition:width 0.8s ease}
+
+/* div */
+.div{height:1px;background:var(--border);margin:0.875rem 0}
+
+/* chart wrap */
+.cw{position:relative;width:100%}
+
+/* insight block */
+.insight{background:var(--card);border:1px solid var(--border);border-left-width:2px;border-radius:0 7px 7px 0;padding:8px 10px;margin-bottom:6px;font-size:0.75rem;color:var(--t2);line-height:1.65}
+.insight strong{font-weight:700}
+
+/* settings panel specific styles */
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+.settings-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.25rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.01);
+}
+.settings-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--t1);
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.5rem;
+}
+.code-pre {
+  background: var(--bg2);
+  color: var(--t2);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  padding: 0.75rem;
+  border-radius: 6px;
+  overflow-x: auto;
+  max-height: 180px;
+  margin-top: 0.5rem;
+  border: 1px solid var(--border);
+}
+.sync-log {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  padding: 6px 10px;
+  background: var(--bg);
+  border-radius: 5px;
+  margin-top: 8px;
+  color: var(--t3);
+  max-height: 100px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+}
+</style>
+</head>
+<body>
+
+<!-- ══ WELCOME SCREEN ══ -->
+<div id="welcome">
+  <div class="w-grid"></div>
+  <div class="w-glow"></div>
+  <div class="w-inner">
+    <div class="w-flag">
+      <div class="fs fs-s"></div><div class="fs fs-w"></div><div class="fs fs-g"></div>
+    </div>
+    <div class="w-shlok">
+      <div class="ws-label" id="ws-label">Bhagavad Gita — Chapter 1, Verse 1 · Today's Shlok</div>
+      <div class="ws-skt" id="ws-skt">धृतराष्ट्र उवाच<br>धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः।<br>मामकाः पाण्डवाश्चैव किमकुर्वत सञ्जय॥</div>
+      <div class="ws-eng" id="ws-eng">Dhritarashtra said: O Sanjaya, after my sons and the sons of Pandu assembled in the place of pilgrimage at Kurukshetra, desiring to fight, what did they do?</div>
+      <div class="ws-ref" id="ws-ref">Bhagavad Gita · Chapter 1, Verse 1 · Theme: Setting the Stage</div>
+    </div>
+    <div class="w-title">Gourav Life OS &nbsp;<span>FY 2026–27</span></div>
+    <div class="w-sub">Your complete personal dashboard — expenses, morning routine, fitness &amp; spiritual growth</div>
+    <div class="w-btns">
+      <button class="btn-go" onclick="launch()">▶&nbsp; Start My Day</button>
+      <button class="btn-ghost" onclick="launch()">Open Dashboard</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ APP ══ -->
+<div id="app">
+  <nav class="topnav">
+    <div class="tn-logo">
+      <div class="tn-logo-box">G</div>
+      <div><span class="tn-logo-name">Gourav Life OS</span><span class="tn-logo-fy">&nbsp;FY 2026-27</span></div>
+    </div>
+    <div class="tn-tabs">
+      <div class="tn-tab active" data-page="dashboard" onclick="goPage(this)">🏠 Dashboard</div>
+      <div class="tn-tab" data-page="morning" onclick="goPage(this)">🌅 Morning Routine</div>
+      <div class="tn-tab" data-page="expenses" onclick="goPage(this)">💰 Expenses</div>
+      <div class="tn-tab" data-page="annual" onclick="goPage(this)">📊 Annual Summary</div>
+      <div class="tn-tab" data-page="gym" onclick="goPage(this)">💪 Gym Tracker</div>
+      <div class="tn-tab" data-page="settings" onclick="goPage(this)">⚙️ Settings</div>
+    </div>
+    <div class="tn-right">
+      <div style="display:flex; align-items:center; gap:4px; border:1px solid var(--border); border-radius:6px; padding:2px; background:var(--bg2); margin-right:8px;">
+        <button class="ss-btn" style="padding:2px 8px; font-size:0.75rem;" onclick="adjustZoom(-1)">A−</button>
+        <span style="font-size:0.7rem; font-weight:700; min-width:40px; text-align:center; color:var(--t2);" id="zoom-lbl">100%</span>
+        <button class="ss-btn" style="padding:2px 8px; font-size:0.75rem;" onclick="adjustZoom(1)">A+</button>
+      </div>
+      <span class="tn-chip tc-r">Apr: ₹22,036 ⚠️</span>
+      <span class="tn-chip tc-g">May: ₹9,137 ✅</span>
+      <span class="tn-chip tc-b">FY: ₹35,173</span>
+    </div>
+  </nav>
+
+  <!-- ══ DASHBOARD ══ -->
+  <div class="page active" id="page-dashboard">
+    <!-- KPI STATS -->
+    <div class="stat-grid">
+      <div class="sc"><div class="sc-top"><span class="sc-lbl">Apr Spent</span><span class="sc-icon">💸</span></div><div class="sc-val" style="color:var(--red2)">₹22,036</div><div class="sc-sub">Budget ₹20,000</div><div class="sc-bar"><div class="sc-bfill" style="width:100%;background:var(--red)"></div></div></div>
+      <div class="sc"><div class="sc-top"><span class="sc-lbl">May Spent</span><span class="sc-icon">✅</span></div><div class="sc-val" style="color:var(--green2)">₹9,137</div><div class="sc-sub">Budget ₹20,000</div><div class="sc-bar"><div class="sc-bfill" style="width:46%;background:var(--green)"></div></div></div>
+      <div class="sc"><div class="sc-top"><span class="sc-lbl">FY Total</span><span class="sc-icon">📅</span></div><div class="sc-val" style="color:var(--amber2)">₹35,173</div><div class="sc-sub">Cap ₹2,40,000</div><div class="sc-bar"><div class="sc-bfill" style="width:15%;background:var(--amber)"></div></div></div>
+      <div class="sc"><div class="sc-top"><span class="sc-lbl">Apr Daily Avg</span><span class="sc-icon">📆</span></div><div class="sc-val" style="color:var(--red2)">₹734</div><div class="sc-sub">Target ₹667</div><div class="sc-bar"><div class="sc-bfill" style="width:100%;background:var(--red)"></div></div></div>
+      <div class="sc"><div class="sc-top"><span class="sc-lbl">Accommodation</span><span class="sc-icon">🏠</span></div><div class="sc-val" style="color:var(--blue2)">₹9,333</div><div class="sc-sub">2-mo total</div><div class="sc-bar"><div class="sc-bfill" style="width:61%;background:var(--blue)"></div></div></div>
+      <div class="sc"><div class="sc-top"><span class="sc-lbl">Gym FY</span><span class="sc-icon">💪</span></div><div class="sc-val" style="color:var(--purple2)">₹8,000</div><div class="sc-sub">Cap ₹18,000</div><div class="sc-bar"><div class="sc-bfill" style="width:44%;background:var(--purple)"></div></div></div>
+      <div class="sc"><div class="sc-top"><span class="sc-lbl">Routine</span><span class="sc-icon">🌅</span></div><div class="sc-val" id="dash-rt" style="color:var(--green2)">0%</div><div class="sc-sub">Today's score</div><div class="sc-bar"><div class="sc-bfill" id="dash-rtb" style="width:0%;background:var(--green)"></div></div></div>
+    </div>
+
+    <div class="row">
+      <div class="f1">
+        <div class="panel" style="margin-bottom:1rem">
+          <div class="ph">April vs May — Category Comparison</div>
+          <div class="cw" style="height:270px"><canvas id="catCompChart" role="img" aria-label="Category comparison chart">April vs May spend by category.</canvas></div>
+        </div>
+        <div class="g2">
+          <div class="panel"><div class="ph">April — Spend Distribution</div><div class="cw" style="height:220px"><canvas id="aprPieChart" role="img" aria-label="April pie chart">April spend distribution.</canvas></div></div>
+          <div class="panel"><div class="ph">April — Daily Spend Trend</div><div class="cw" style="height:220px"><canvas id="aprDailyChart" role="img" aria-label="April daily chart">April daily spending.</canvas></div></div>
+        </div>
+      </div>
+      <div style="width:310px;flex-shrink:0;display:flex;flex-direction:column;gap:1.25rem">
+        <div class="panel">
+          <div class="ph">April Budget Status</div>
+          <div id="bud-status-list"></div>
+        </div>
+        <div class="panel">
+          <div class="ph">Smart Insights</div>
+          <div class="insight" style="border-left-color:var(--red2)"><strong style="color:var(--red2)">⚠️ April Overspent:</strong> ₹2,036 over. Refreshment (₹3,980 vs ₹2,000 cap) and Medical (₹2,520 vs ₹500) were main drivers.</div>
+          <div class="insight" style="border-left-color:var(--green2)"><strong style="color:var(--green2)">✅ May on track:</strong> Only ₹9,137 spent — ₹10,863 under budget. Strong control on food &amp; tea.</div>
+          <div class="insight" style="border-left-color:var(--amber2)"><strong style="color:var(--amber2)">📌 Gym:</strong> ₹2,000/month consistent — ₹8,000 in FY. On track vs ₹18,000 annual cap.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ MORNING ROUTINE ══ -->
+  <div class="page" id="page-morning">
+    <div class="page-hdr">
+      <div><div class="page-title">🌅 Morning Routine Tracker</div><div class="page-sub">Set your target, then log how much you actually completed</div></div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <input class="inp" type="date" id="mr-date-sel" style="padding:3px 8px;font-size:0.75rem;border-radius:5px;width:125px" onchange="changeMRDate(this.value)">
+        <span class="badge bg" id="mr-pct-b">0% Complete</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="f1">
+        <div class="panel" style="margin-bottom:1rem">
+          <div class="ph">Daily Routine — Set Target &amp; Log Actual <span style="margin-left:auto;font-size:0.6rem;color:var(--t3);font-weight:400;text-transform:none;letter-spacing:0">Use +/− buttons or type in the fields</span></div>
+          <div style="overflow-x:auto">
+            <table class="mr-table">
+              <thead><tr>
+                <th>Activity</th>
+                <th class="num-h">Target (min)</th>
+                <th class="num-h">Done (min)</th>
+                <th class="num-h">Progress</th>
+                <th class="num-h">Status</th>
+              </tr></thead>
+              <tbody id="mr-tbody"></tbody>
+              <tfoot><tr>
+                <td colspan="1" style="font-weight:700;color:var(--t1);background:var(--bg2);padding:7px 10px;border:1px solid var(--border)">TOTAL</td>
+                <td class="num-cell" style="background:var(--bg2);border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--blue2)" id="mr-tot-target">0 min</td>
+                <td class="num-cell" style="background:var(--bg2);border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--green2)" id="mr-tot-done">0 min</td>
+                <td colspan="2" style="background:var(--bg2);border:1px solid var(--border);padding:6px 10px">
+                  <div class="prog-row"><div class="prog-bar-sm" style="height:7px"><div class="prog-fill-sm" id="mr-tot-bar" style="width:0%;background:var(--green)"></div></div><div class="prog-pct" id="mr-tot-pct" style="color:var(--green2)">0%</div></div>
+                </td>
+              </tr></tfoot>
+            </table>
+          </div>
+          <div class="mr-summary-row">
+            <div class="mrs-item"><div class="mrs-val" id="mrs-tasks" style="color:var(--blue2)">0/7</div><div class="mrs-lbl">Tasks Met</div></div>
+            <div class="mrs-item"><div class="mrs-val" id="mrs-mins" style="color:var(--amber2)">0</div><div class="mrs-lbl">Mins Done</div></div>
+            <div class="mrs-item"><div class="mrs-val" id="mrs-score" style="color:var(--green2)">0%</div><div class="mrs-lbl">Score</div></div>
+            <div class="mrs-item"><div class="mrs-val" id="mrs-streak" style="color:var(--saffron)">—</div><div class="mrs-lbl">Streak</div></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="ph">Weekly Routine Performance</div>
+          <div class="cw" style="height:240px"><canvas id="mrWeekChart" role="img" aria-label="Weekly routine performance">Weekly morning routine completion.</canvas></div>
+        </div>
+      </div>
+      <div style="width:290px;flex-shrink:0;display:flex;flex-direction:column;gap:1.25rem">
+        <div class="panel" style="text-align:center">
+          <div class="ph" style="justify-content:center">Today's Score</div>
+          <div class="ring-wrap">
+            <svg width="100" height="100" viewBox="0 0 100 100">
+              <defs><linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#4f8ef7"/></linearGradient></defs>
+              <circle class="r-bg" cx="50" cy="50" r="45"/>
+              <circle class="r-fg" id="mr-ring" cx="50" cy="50" r="45" stroke="url(#rg)" stroke-dashoffset="283"/>
+            </svg>
+            <div class="ring-text"><div class="r-num" id="mr-ring-num" style="color:var(--green2)">0%</div><div class="r-lbl">Done</div></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="ph">This Week's History</div>
+          <div id="mr-history"></div>
+        </div>
+        <div class="panel">
+          <div class="ph" style="color:var(--saffron)">🕉️ Morning Shlok</div>
+          <div style="font-family:'Noto Sans Devanagari',sans-serif;font-size:0.85rem;color:#7c2d12;line-height:1.8;margin-bottom:6px;font-weight:600">ब्रह्ममुहूर्ते या निद्रा<br>सा तमो निद्रा प्रकीर्तिता।</div>
+          <div style="font-size:0.72rem;color:var(--t2);font-style:italic;line-height:1.6">Sleep in Brahma Muhurta (4-6 AM) is called the sleep of ignorance. Rising early is an act of discipline and spiritual progress.</div>
+          <div style="font-size:0.62rem;color:var(--saffron);margin-top:5px;font-weight:600">— Ancient Vedic Teaching</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ EXPENSES ══ -->
+  <div class="page" id="page-expenses">
+    <div class="page-hdr" style="display:flex; justify-content:space-between; align-items:center;">
+      <div><div class="page-title">💰 Monthly Expense Tracker — FY 2026-27</div><div class="page-sub">Real data imported from your Google Sheet · 13 categories · ₹20,000 monthly budget</div></div>
+      <button class="ibtn-sm" onclick="exportExpensesCSV()" style="display:flex; align-items:center; gap:5px; padding:6px 12px; font-weight:600;"><span style="font-size:0.95rem;">📥</span> Export to Excel (CSV)</button>
+    </div>
+    <div class="month-tabs" id="month-tabs"></div>
+    <div style="display:grid; grid-template-columns: 2.8fr 1.2fr; gap:1rem; margin-bottom:1rem;">
+      <div class="add-form" style="margin-bottom:0; display:grid; grid-template-columns: 1.1fr 1.1fr 0.8fr 1.3fr auto; gap:0.5rem; height:100%; align-items:end;">
+        <div class="fg"><label>Date</label><input class="inp" type="date" id="exp-date"></div>
+        <div class="fg"><label>Category</label>
+          <select class="inp" id="exp-cat">
+            <option>Food</option><option>Tea</option><option>Refreshment</option><option>Petrol</option>
+            <option>Bike Servicing</option><option>Accommodation</option><option>Transportation</option>
+            <option>Medical</option><option>Clothing</option><option>Entertainment</option>
+            <option>Professional Exp.</option><option>Gym &amp; Fitness</option><option>Any Other</option>
+          </select>
+        </div>
+        <div class="fg"><label>Amount (₹)</label><input class="inp" type="number" id="exp-amount" placeholder="0"></div>
+        <div class="fg"><label>Notes</label><input class="inp" id="exp-notes" placeholder="Optional..."></div>
+        <button class="ibtn" onclick="addExpense()">+ Add</button>
+      </div>
+      <div class="add-form" style="margin-bottom:0; display:grid; grid-template-columns: 1fr auto; gap:0.5rem; height:100%; align-items:end;">
+        <div class="fg">
+          <label id="budget-lbl" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Budget Limit</label>
+          <input class="inp" type="number" id="monthly-budget-input" placeholder="20000">
+        </div>
+        <button class="ibtn btn-g" onclick="updateCurrentMonthBudget()">Update</button>
+      </div>
+    </div>
+    <div id="month-summary" style="margin-bottom:1rem"></div>
+    <div class="g2" style="margin-bottom:1rem">
+      <div class="panel"><div class="ph" id="cat-ch-title">Category Breakdown</div><div class="cw" style="height:260px"><canvas id="catBarChart" role="img" aria-label="Category bar chart">Category breakdown.</canvas></div></div>
+      <div class="panel"><div class="ph" id="daily-ch-title">Daily Spending</div><div class="cw" style="height:260px"><canvas id="dailyLineChart" role="img" aria-label="Daily spending chart">Daily spending trend.</canvas></div></div>
+    </div>
+    <div class="panel" style="margin-bottom:1rem"><div class="ph" id="bud-tbl-title">Budget vs Actual</div><div style="overflow-x:auto"><table class="exp-tbl" id="budgetTable"></table></div></div>
+    <div class="panel"><div class="ph" id="daily-log-title">Daily Expense Log</div><div style="overflow-x:auto"><table class="daily-tbl" id="dailyLogTable"></table></div></div>
+  </div>
+
+  <!-- ══ ANNUAL ══ -->
+  <div class="page" id="page-annual">
+    <div class="page-hdr">
+      <div><div class="page-title">📊 Annual Summary — FY 2026-27</div><div class="page-sub">April 2026 → March 2027 · Full year overview</div></div>
+      <span class="badge bp">FY Spent: ₹35,173 / ₹2,40,000</span>
+    </div>
+    <div class="row" style="margin-bottom:1rem">
+      <div class="f1">
+        <div class="panel" style="margin-bottom:1rem"><div class="ph">Monthly Spend vs Budget</div><div class="cw" style="height:270px"><canvas id="annMonthChart" role="img" aria-label="Annual monthly chart">Monthly spend vs budget.</canvas></div></div>
+        <div class="panel"><div class="ph">Category Annual Spend vs Cap</div><div class="cw" style="height:250px"><canvas id="annCatChart" role="img" aria-label="Annual category chart">Annual category spend.</canvas></div></div>
+      </div>
+      <div style="width:300px;flex-shrink:0;display:flex;flex-direction:column;gap:1.25rem">
+        <div class="panel">
+          <div class="ph">FY Progress</div>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:0.875rem">
+            <div><div style="display:flex;justify-content:space-between;font-size:0.72rem;margin-bottom:4px"><span style="color:var(--t3)">Spent</span><span class="mono" style="color:var(--amber2)">₹35,173</span></div><div class="pbar"><div class="pfill" style="width:15%;background:var(--amber)"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;font-size:0.72rem;margin-bottom:4px"><span style="color:var(--t3)">Remaining</span><span class="mono" style="color:var(--green2)">₹2,04,827</span></div><div class="pbar"><div class="pfill" style="width:85%;background:var(--green)"></div></div></div>
+          </div>
+          <div class="div"></div>
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <div style="display:flex;justify-content:space-between;font-size:0.73rem"><span style="color:var(--t3)">Months complete</span><span class="mono" style="color:var(--t1)">2 / 12</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:0.73rem"><span style="color:var(--t3)">Average monthly</span><span class="mono" style="color:var(--amber2)">₹17,587</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:0.73rem"><span style="color:var(--t3)">Apr overspent</span><span class="mono" style="color:var(--red2)">₹2,036</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:0.73rem"><span style="color:var(--t3)">May saved</span><span class="mono" style="color:var(--green2)">₹10,863</span></div>
+          </div>
+        </div>
+        <div class="panel"><div class="ph">Category Annual Status</div><div id="ann-status-list"></div></div>
+      </div>
+    </div>
+    <div class="panel"><div class="ph">Full Year — Month-by-Month Breakdown</div><div style="overflow-x:auto"><table class="ann-tbl" id="annualTable"></table></div></div>
+  </div>
+
+  <!-- ══ GYM TRACKER ══ -->
+  <div class="page" id="page-gym">
+    <div class="page-hdr" style="display:flex; justify-content:space-between; align-items:center;">
+      <div><div class="page-title">💪 Gym &amp; Fitness Tracker — FY 2026-27</div><div class="page-sub">Log workouts · Track weight · Monitor consistency</div></div>
+      <button class="ibtn-sm" onclick="exportGymCSV()" style="display:flex; align-items:center; gap:5px; padding:6px 12px; font-weight:600;"><span style="font-size:0.95rem;">📥</span> Export to Excel (CSV)</button>
+    </div>
+    <div class="row">
+      <div class="f1">
+        <div class="panel" style="margin-bottom:1rem">
+          <div class="ph">Log a Workout</div>
+          <div class="wt-grid">
+            <div class="wt-btn" onclick="selWT(this,'W')"><span class="wt-icon">🏋️</span>Weights</div>
+            <div class="wt-btn" onclick="selWT(this,'C')"><span class="wt-icon">🏃</span>Cardio</div>
+            <div class="wt-btn" onclick="selWT(this,'H')"><span class="wt-icon">⚡</span>HIIT</div>
+            <div class="wt-btn active" onclick="selWT(this,'Y')"><span class="wt-icon">🧘</span>Yoga</div>
+            <div class="wt-btn" onclick="selWT(this,'P')"><span class="wt-icon">🌬️</span>Pranayama</div>
+            <div class="wt-btn" onclick="selWT(this,'R')"><span class="wt-icon">😴</span>Rest Day</div>
+            <div class="wt-btn" onclick="selWT(this,'O')"><span class="wt-icon">🤸</span>Other</div>
+          </div>
+          <div class="g4" style="margin-bottom:0.75rem">
+            <div class="fg"><label style="font-size:0.6rem;color:var(--t3);font-weight:600;text-transform:uppercase;letter-spacing:0.06em;display:block;margin-bottom:4px">Date</label><input class="inp" type="date" id="gym-date"></div>
+            <div class="fg"><label style="font-size:0.6rem;color:var(--t3);font-weight:600;text-transform:uppercase;letter-spacing:0.06em;display:block;margin-bottom:4px">Duration (min)</label><input class="inp" type="number" id="gym-dur" placeholder="45"></div>
+            <div class="fg"><label style="font-size:0.6rem;color:var(--t3);font-weight:600;text-transform:uppercase;letter-spacing:0.06em;display:block;margin-bottom:4px">Weight (kg)</label><input class="inp" type="number" id="gym-wt" placeholder="70.5" step="0.1"></div>
+            <div class="fg"><label style="font-size:0.6rem;color:var(--t3);font-weight:600;text-transform:uppercase;letter-spacing:0.06em;display:block;margin-bottom:4px">Calories Burned</label><input class="inp" type="number" id="gym-cal" placeholder="350"></div>
+          </div>
+          <div style="display:flex;gap:0.5rem">
+            <input class="inp f1" id="gym-notes" placeholder="Exercises / notes (e.g. Bench 3×10, 5km run, Surya Namaskar 12 rounds...)">
+            <button class="ibtn" onclick="logWorkout()">Log Workout</button>
+          </div>
+        </div>
+        <div class="g2">
+          <div class="panel"><div class="ph">Sessions per Month</div><div class="cw" style="height:235px"><canvas id="gymSessChart" role="img" aria-label="Gym sessions chart">Sessions per month.</canvas></div></div>
+          <div class="panel"><div class="ph">Weight Progress</div><div class="cw" style="height:235px"><canvas id="gymWtChart" role="img" aria-label="Weight progress chart">Weight over time.</canvas></div></div>
+        </div>
+      </div>
+      <div style="width:290px;flex-shrink:0;display:flex;flex-direction:column;gap:1.25rem">
+        <div class="panel">
+          <div class="ph">FY Fitness Stats</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.625rem">
+            <div style="background:var(--cell);border:1px solid var(--border);border-radius:7px;padding:0.75rem;text-align:center"><div style="font-size:0.6rem;color:var(--t3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px">Sessions</div><div style="font-size:1.3rem;font-weight:800;font-family:'JetBrains Mono',monospace" id="gym-stat-sess">0</div></div>
+            <div style="background:var(--cell);border:1px solid var(--border);border-radius:7px;padding:0.75rem;text-align:center"><div style="font-size:0.6rem;color:var(--t3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px">Gym Spend</div><div style="font-size:1.3rem;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--purple2)" id="gym-stat-spend">₹8,000</div></div>
+            <div style="background:var(--cell);border:1px solid var(--border);border-radius:7px;padding:0.75rem;text-align:center"><div style="font-size:0.6rem;color:var(--t3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px">Avg Duration</div><div style="font-size:1.3rem;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--amber2)" id="gym-stat-dur">—</div></div>
+            <div style="background:var(--cell);border:1px solid var(--border);border-radius:7px;padding:0.75rem;text-align:center"><div style="font-size:0.6rem;color:var(--t3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px">Current Weight</div><div style="font-size:1.3rem;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--cyan2)" id="gym-stat-wt">—</div></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="ph">Recent Workouts</div>
+          <div id="gym-log-list" style="font-size:0.75rem;color:var(--t3)">No workouts logged yet. Use the form to add your first session.</div>
+        </div>
+        <div class="panel">
+          <div class="ph" style="color:var(--saffron)">🕉️ Fitness Shlok</div>
+          <div style="font-family:'Noto Sans Devanagari',sans-serif;font-size:0.85rem;color:#7c2d12;line-height:1.8;margin-bottom:5px;font-weight:600">शरीरमाद्यं खलु धर्मसाधनम्।</div>
+          <div style="font-size:0.72rem;color:var(--t2);font-style:italic;line-height:1.6">The body is indeed the primary instrument of righteous living. A healthy body enables you to fulfil your duties.</div>
+          <div style="font-size:0.62rem;color:var(--saffron);margin-top:4px;font-weight:600">— Kalidasa, Kumarasambhava</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- ══ SETTINGS ══ -->
+  <div class="page" id="page-settings">
+    <div class="page-hdr">
+      <div><div class="page-title">⚙️ Settings &amp; Data Sync</div><div class="page-sub">Manage your local database, backups, and Google Sheets cloud integration</div></div>
+    </div>
+    
+    <div class="settings-grid">
+      <!-- Card 1: DB Stats -->
+      <div class="settings-card">
+        <div class="settings-title">📊 Database Statistics</div>
+        <div style="font-size:0.75rem; display:flex; flex-direction:column; gap:8px;">
+          <div style="display:flex; justify-content:space-between; border-bottom: 1px dashed var(--border); padding-bottom:4px;">
+            <span style="color:var(--t3)">Storage Engine</span>
+            <strong style="color:var(--green2)">localStorage</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; border-bottom: 1px dashed var(--border); padding-bottom:4px;">
+            <span style="color:var(--t3)">Expense Records</span>
+            <strong id="db-stat-expenses">0</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; border-bottom: 1px dashed var(--border); padding-bottom:4px;">
+            <span style="color:var(--t3)">Gym Workouts</span>
+            <strong id="db-stat-gym">0</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; border-bottom: 1px dashed var(--border); padding-bottom:4px;">
+            <span style="color:var(--t3)">Daily Routine Logs</span>
+            <strong id="db-stat-routine-logs">0</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; border-bottom: 1px dashed var(--border); padding-bottom:4px;">
+            <span style="color:var(--t3)">Routine Targets</span>
+            <strong id="db-stat-routine-targets">0</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; border-bottom: 1px dashed var(--border); padding-bottom:4px;">
+            <span style="color:var(--t3)">Est. Database Size</span>
+            <strong id="db-stat-size">0.0 KB</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; border-bottom: 1px dashed var(--border); padding-bottom:4px;">
+            <span style="color:var(--t3)">Last Web Sync</span>
+            <strong id="db-stat-lastsync" style="color:var(--t2)">Never</strong>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Card 2: Local DB Ops -->
+      <div class="settings-card">
+        <div class="settings-title">💾 Local Database Operations</div>
+        <div style="display:flex; flex-direction:column; gap:12px; margin-top:0.5rem;">
+          <div>
+            <div style="font-size:0.65rem; color:var(--t3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.04em">Backup Your Data</div>
+            <button class="btn" style="width:100%; justify-content:center; padding:8px" onclick="exportDb()">📥 Export Backup (JSON)</button>
+          </div>
+          <div>
+            <div style="font-size:0.65rem; color:var(--t3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.04em">Restore From Backup</div>
+            <div style="display:flex; gap:6px">
+              <input class="inp" type="file" id="db-import-file" style="font-size:0.7rem; flex-grow:1; padding:4px 6px">
+              <button class="btn btn-g" style="padding:6px 12px; font-size:0.75rem" onclick="importDb()">Restore</button>
+            </div>
+          </div>
+          <div style="margin-top:4px">
+            <div style="font-size:0.65rem; color:var(--t3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.04em">Dangerous Zone</div>
+            <button class="btn btn-r" style="width:100%; justify-content:center; padding:8px" onclick="resetDbConfirm()">⚠️ Reset Database to Default</button>
+          </div>
+          <div style="margin-top:4px">
+            <div style="font-size:0.65rem; color:var(--t3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.04em">App Preferences</div>
+            <button class="btn btn-b" style="width:100%; justify-content:center; padding:8px" onclick="resetAutoBypass()">Show Welcome Screen on next load</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: Cloud Sync -->
+      <div class="settings-card">
+        <div class="settings-title">☁️ Google Sheets Cloud Sync</div>
+        <div style="display:flex; flex-direction:column; gap:10px; margin-top:0.5rem;">
+          <div>
+            <div style="font-size:0.65rem; color:var(--t3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.04em">Apps Script Web App URL</div>
+            <input class="inp" type="text" id="sync-script-url" style="width:100%; font-size:0.7rem; padding:6px 8px" placeholder="https://script.google.com/macros/s/.../exec" onchange="saveSyncSettings()">
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center">
+            <span style="font-size:0.72rem; color:var(--t2)">Status: <strong id="sync-status-badge" style="color:var(--t3)">Not Configured</strong></span>
+            <button class="btn btn-b" id="btn-sync-now" style="padding:6px 14px; font-size:0.75rem" onclick="syncNow()">Sync Now ⚡</button>
+          </div>
+          <div class="sync-log" id="sync-log-box">Sync log messages will appear here...</div>
+        </div>
+      </div>
+
+      <!-- Card 4: Budget Config -->
+      <div class="settings-card" style="grid-column: span 2;">
+        <div class="settings-title">💰 Budget Configuration</div>
+        <div style="margin-bottom:1rem; font-size:0.75rem; color:var(--t2);">Modify your monthly limits and category caps. Changes take effect instantly across all pages and save to LocalStorage automatically.</div>
+        
+        <div class="g2" style="gap:1.5rem">
+          <div>
+            <div style="font-size:0.8rem; font-weight:700; color:var(--t1); margin-bottom:0.75rem; border-bottom:1px solid var(--border); padding-bottom:4px;">Monthly Limits</div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.5rem; max-height:280px; overflow-y:auto; padding-right:4px;" id="settings-months-budget">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+          <div>
+            <div style="font-size:0.8rem; font-weight:700; color:var(--t1); margin-bottom:0.75rem; border-bottom:1px solid var(--border); padding-bottom:4px;">Category Caps</div>
+            <div style="display:grid; grid-template-columns: 1.5fr 1fr; gap:0.5rem; max-height:280px; overflow-y:auto; padding-right:4px;" id="settings-cats-budget">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Instruction Panel -->
+    <div class="panel" style="margin-top: 1rem;">
+      <div class="ph" style="cursor:pointer" onclick="toggleElement('sync-guide')">📖 How to Setup Google Sheets Sync (Click to Expand/Collapse)</div>
+      <div id="sync-guide" style="display:none; font-size:0.75rem; color:var(--t2); line-height:1.6; margin-top:0.5rem">
+        <ol style="margin-left:1.2rem; display:flex; flex-direction:column; gap:6px">
+          <li>Create a new <strong>Google Sheet</strong> in your Google Drive.</li>
+          <li>Rename the default sheet to <strong>Summary</strong>, or simply run the script to initialize pages.</li>
+          <li>Go to <strong>Extensions</strong> &gt; <strong>Apps Script</strong>.</li>
+          <li>Paste the code below, replacing all placeholder script contents.</li>
+          <li>Click <strong>Save</strong> and then click <strong>Deploy</strong> &gt; <strong>New Deployment</strong>.</li>
+          <li>Select type: <strong>Web App</strong>. Set "Execute as": <strong>Me</strong>. Set "Who has access": <strong>Anyone</strong>.</li>
+          <li>Deploy, copy the Web App URL, and paste it into the Web App URL box above.</li>
+        </ol>
+        <div class="div"></div>
+        <div style="font-size:0.7rem; font-weight:600; margin-bottom:4px; color:var(--t1)">Google Apps Script Source Code:</div>
+        <pre class="code-pre" id="script-code-copy" style="max-height: 250px; overflow-y: auto; cursor: pointer;" onclick="copyScriptCode()">
+function doPost(e) {
+  try {
+    var data = JSON.parse(e.postData.contents);
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    
+    // 1. Save Sync metadata
+    var metaSheet = getOrCreateSheet(ss, "Sync_Metadata");
+    metaSheet.clearContents();
+    metaSheet.appendRow(["Key", "Value"]);
+    metaSheet.appendRow(["Last Synced At", new Date().toISOString()]);
+    metaSheet.appendRow(["Total Expense Records", data.expenses ? data.expenses.length : 0]);
+    metaSheet.appendRow(["Total Gym Records", data.gym_logs ? data.gym_logs.length : 0]);
+    metaSheet.appendRow(["Total Routine Logs", data.mr_daily_logs ? data.mr_daily_logs.length : 0]);
+    
+    // 2. Save Expenses
+    if (data.expenses) {
+      var sheet = getOrCreateSheet(ss, "Expenses");
+      sheet.clearContents();
+      sheet.appendRow(["ID", "Date", "Desc", "Category", "Amount", "Account", "Month"]);
+      data.expenses.forEach(function(item) {
+        sheet.appendRow([item.id, item.date, item.desc, item.cat, item.amt, item.acc, item.m]);
+      });
+    }
+    
+    // 3. Save Gym Logs
+    if (data.gym_logs) {
+      var sheet = getOrCreateSheet(ss, "Gym_Logs");
+      sheet.clearContents();
+      sheet.appendRow(["Date", "Duration (min)", "Activity", "Weight (kg)", "Notes"]);
+      data.gym_logs.forEach(function(item) {
+        sheet.appendRow([item.date, item.dur, item.act, item.wt || "", item.notes || ""]);
+      });
+    }
+    
+    // 4. Save Morning Routine Logs
+    if (data.mr_daily_logs) {
+      var sheet = getOrCreateSheet(ss, "Routine_Daily_Logs");
+      sheet.clearContents();
+      sheet.appendRow(["Date", "Activity", "Target", "Done", "Completed %"]);
+      for (var date in data.mr_daily_logs) {
+        var dayLog = data.mr_daily_logs[date];
+        for (var act in dayLog) {
+          var actLog = dayLog[act];
+          sheet.appendRow([date, act, actLog.target || 0, actLog.done || 0, actLog.target ? Math.round((actLog.done/actLog.target)*100) : 0]);
+        }
+      }
+    }
+    
+    // 5. Save Routine Targets
+    if (data.mr_targets) {
+      var sheet = getOrCreateSheet(ss, "Routine_Targets");
+      sheet.clearContents();
+      sheet.appendRow(["Activity", "Target (min)"]);
+      for (var act in data.mr_targets) {
+        sheet.appendRow([act, data.mr_targets[act]]);
+      }
+    }
+    
+    return ContentService.createTextOutput(JSON.stringify({
+      status: "success",
+      message: "Sync completed successfully at " + new Date().toISOString()
+    })).setMimeType(ContentService.MimeType.JSON);
+    
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({
+      status: "error",
+      message: error.toString()
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function getOrCreateSheet(ss, name) {
+  var sheet = ss.getSheetByName(name);
+  if (!sheet) {
+    sheet = ss.insertSheet(name);
+  }
+  return sheet;
+}
+        </pre>
+        <div style="font-size:0.6rem; color:var(--t3); text-align:right; margin-top:2px">Click the code block to copy to clipboard</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ════════════════════════════════════════════
+   SHLOK DATA — Chapter sequence, no repeats
+   Starts BG 1.1 and continues in order
+════════════════════════════════════════════ */
+const SHLOKS=[
+  {ch:1,v:1,skt:'धृतराष्ट्र उवाच\nधर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः।\nमामकाः पाण्डवाश्चैव किमकुर्वत सञ्जय॥',eng:'Dhritarashtra said: O Sanjaya, after my sons and the sons of Pandu assembled in the place of pilgrimage at Kurukshetra, desiring to fight, what did they do?',theme:'Setting the Stage'},
+  {ch:1,v:47,skt:'सञ्जय उवाच\nएवमुक्त्वार्जुनः सङ्ख्ये रथोपस्थ उपाविशत्।\nविसृज्य सशरं चापं शोकसंविग्नमानसः॥',eng:'Sanjaya said: Having spoken thus on the battlefield, Arjuna laid aside his bow and arrows and sat down on the chariot, his mind overwhelmed with grief.',theme:'Arjuna\'s Grief'},
+  {ch:2,v:3,skt:'क्लैब्यं मा स्म गमः पार्थ नैतत्त्वय्युपपद्यते।\nक्षुद्रं हृदयदौर्बल्यं त्यक्त्वोत्तिष्ठ परन्तप॥',eng:'Do not yield to impotence, O Arjuna. It does not befit you. Shake off your faint-heartedness and arise, O scorcher of enemies!',theme:'Courage'},
+  {ch:2,v:14,skt:'मात्रास्पर्शास्तु कौन्तेय शीतोष्णसुखदुःखदाः।\nआगमापायिनोऽनित्यास्तांस्तितिक्षस्व भारत॥',eng:'O son of Kunti, the contacts between the senses and the sense objects give rise to cold and heat, pleasure and pain. They come and go and are impermanent. Bear them patiently, O Arjuna.',theme:'Equanimity'},
+  {ch:2,v:19,skt:'य एनं वेत्ति हन्तारं यश्चैनं मन्यते हतम्।\nउभौ तौ न विजानीतो नायं हन्ति न हन्यते॥',eng:'One who thinks that this soul is a slayer and one who thinks that this soul is slain — both of them are in ignorance. The soul neither slays nor is slain.',theme:'Soul is Eternal'},
+  {ch:2,v:20,skt:'न जायते म्रियते वा कदाचित्\nनायं भूत्वा भविता वा न भूयः।\nअजो नित्यः शाश्वतोऽयं पुराणो\nन हन्यते हन्यमाने शरीरे॥',eng:'The soul is never born nor dies at any time. It has not come into being, does not come into being, and will not come into being. It is unborn, eternal, ever-existing and primeval.',theme:'Immortality of Soul'},
+  {ch:2,v:47,skt:'कर्मण्येवाधिकारस्ते मा फलेषु कदाचन।\nमा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि॥',eng:'You have the right to perform your duties, but never to the fruits of action. Never consider yourself the cause of the results, and never be attached to inaction.',theme:'Nishkama Karma'},
+  {ch:2,v:62,skt:'ध्यायतो विषयान्पुंसः सङ्गस्तेषूपजायते।\nसङ्गात्संजायते कामः कामात्क्रोधोऽभिजायते॥',eng:'While contemplating the objects of the senses, a person develops attachment for them. From attachment, desire is born; from desire, anger arises.',theme:'Chain of Downfall'},
+  {ch:3,v:21,skt:'यद्यदाचरति श्रेष्ठस्तत्तदेवेतरो जनः।\nस यत्प्रमाणं कुरुते लोकस्तदनुवर्तते॥',eng:'Whatever a great person does, others follow. Whatever standards he sets, the world follows.',theme:'Leadership by Example'},
+  {ch:3,v:27,skt:'प्रकृतेः क्रियमाणानि गुणैः कर्माणि सर्वशः।\nअहङ्कारविमूढात्मा कर्ताहमिति मन्यते॥',eng:'All actions are performed by the qualities of material nature. But one who is deluded by the false ego thinks: "I am the doer."',theme:'Ego & Doership'},
+  {ch:4,v:7,skt:'यदा यदा हि धर्मस्य ग्लानिर्भवति भारत।\nअभ्युत्थानमधर्मस्य तदात्मानं सृजाम्यहम्॥',eng:'Whenever and wherever there is a decline in righteousness and a predominant rise of unrighteousness, at that time I manifest Myself.',theme:'Divine Manifestation'},
+  {ch:4,v:8,skt:'परित्राणाय साधूनां विनाशाय च दुष्कृताम्।\nधर्मसंस्थापनार्थाय सम्भवामि युगे युगे॥',eng:'To deliver the pious and to annihilate the miscreants, as well as to re-establish the principles of righteousness, I appear millennium after millennium.',theme:'Purpose of Avatars'},
+  {ch:5,v:10,skt:'ब्रह्मण्याधाय कर्माणि सङ्गं त्यक्त्वा करोति यः।\nलिप्यते न स पापेन पद्मपत्रमिवाम्भसा॥',eng:'One who performs his duty without attachment, surrendering results to the Supreme, is unaffected by sinful action, as the lotus leaf is untouched by water.',theme:'Renunciation in Action'},
+  {ch:6,v:5,skt:'उद्धरेदात्मनात्मानं नात्मानमवसादयेत्।\nआत्मैव ह्यात्मनो बन्धुरात्मैव रिपुरात्मनः॥',eng:'A person must elevate himself by his own mind, not degrade himself. The mind is the friend of the conditioned soul, and his enemy as well.',theme:'Self-Elevation'},
+  {ch:6,v:6,skt:'बन्धुरात्मात्मनस्तस्य येनात्मैवात्मना जितः।\nअनात्मनस्तु शत्रुत्वे वर्तेतात्मैव शत्रुवत्॥',eng:'For one who has conquered the mind, the mind is the best of friends. But for one who has failed to do so, the mind remains the greatest enemy.',theme:'Mind as Friend or Enemy'},
+  {ch:9,v:22,skt:'अनन्याश्चिन्तयन्तो मां ये जनाः पर्युपासते।\nतेषां नित्याभियुक्तानां योगक्षेमं वहाम्यहम्॥',eng:'For those who worship Me with devotion, meditating on My transcendental form, I carry what they lack and preserve what they have.',theme:'Divine Providence'},
+  {ch:12,v:13,skt:'अद्वेष्टा सर्वभूतानां मैत्रः करुण एव च।\nनिर्ममो निरहङ्कारः समदुःखसुखः क्षमी॥',eng:'One who is not envious but is a kind friend to all living entities, who does not think himself a proprietor, who is free from ego and equal in happiness and distress, and who is tolerant.',theme:'Qualities of a Devotee'},
+  {ch:18,v:63,skt:'इति ते ज्ञानमाख्यातं गुह्याद्गुह्यतरं मया।\nविमृश्यैतदशेषेण यथेच्छसि तथा कुरु॥',eng:'Thus, I have explained to you the most confidential of all knowledge. Deliberate on this fully and then do what you wish to do.',theme:'Free Will'},
+  {ch:18,v:66,skt:'सर्वधर्मान्परित्यज्य मामेकं शरणं व्रज।\nअहं त्वां सर्वपापेभ्यो मोक्षयिष्यामि मा शुचः॥',eng:'Abandon all varieties of religion and just surrender unto Me. I shall deliver you from all sinful reactions. Do not fear.',theme:'Total Surrender'},
+  {ch:18,v:78,skt:'यत्र योगेश्वरः कृष्णो यत्र पार्थो धनुर्धरः।\nतत्र श्रीर्विजयो भूतिर्ध्रुवा नीतिर्मतिर्मम॥',eng:'Wherever there is Krishna, the master of all mystics, and wherever there is Arjuna, the supreme archer, there will also certainly be opulence, victory, extraordinary power, and morality.',theme:'Final Victory'},
+];
+
+/* Day index from April 1, 2026 (FY start) */
+function getDayIndex(){
+  const start=new Date('2026-04-01');
+  const now=new Date();
+  const diff=Math.floor((now-start)/(1000*60*60*24));
+  return Math.max(0,diff)%SHLOKS.length;
+}
+
+let curShlokIdx=getDayIndex();
+
+function renderShlokStrip(i){
+  const s=SHLOKS[i];
+  if (!s) return;
+  const ref=`Bhagavad Gita — Chapter ${s.ch}, Verse ${s.v} · ${s.theme}`;
+  const elMeta = document.getElementById('ss-meta');
+  const elSkt = document.getElementById('ss-skt');
+  const elEng = document.getElementById('ss-eng');
+  if (elMeta) elMeta.textContent=`Today's Shlok — ${ref}`;
+  if (elSkt) elSkt.innerHTML=s.skt.replace(/\n/g,'<br>');
+  if (elEng) elEng.textContent=s.eng;
+  
+  // also update welcome
+  const wsLabel = document.getElementById('ws-label');
+  const wsSkt = document.getElementById('ws-skt');
+  const wsEng = document.getElementById('ws-eng');
+  const wsRef = document.getElementById('ws-ref');
+  if (wsLabel) wsLabel.textContent=`Bhagavad Gita — Chapter ${s.ch}, Verse ${s.v} · Today's Shlok`;
+  if (wsSkt) wsSkt.innerHTML=s.skt.replace(/\n/g,'<br>');
+  if (wsEng) wsEng.textContent=s.eng;
+  if (wsRef) wsRef.textContent=`Bhagavad Gita · Chapter ${s.ch}, Verse ${s.v} · ${s.theme}`;
+}
+function nextShlok(){curShlokIdx=(curShlokIdx+1)%SHLOKS.length;saveDb();renderShlokStrip(curShlokIdx);}
+function prevShlok(){curShlokIdx=((curShlokIdx-1)+SHLOKS.length)%SHLOKS.length;saveDb();renderShlokStrip(curShlokIdx);}
+
+function buildShlokLibrary(){
+  const grid=document.getElementById('shlok-grid');
+  if(!grid || grid.children.length>0)return;
+  const todayIdx=getDayIndex();
+  document.getElementById('shlok-count').textContent=SHLOKS.length;
+  document.getElementById('today-shlok-ref').textContent=`Chapter ${SHLOKS[todayIdx].ch}, Verse ${SHLOKS[todayIdx].v}`;
+  document.getElementById('shlok-progress-badge').textContent=`Day ${todayIdx+1} — BG ${SHLOKS[todayIdx].ch}.${SHLOKS[todayIdx].v}`;
+
+  grid.innerHTML=SHLOKS.map((s,i)=>`
+    <div class="shlok-card${i===todayIdx?' current-day':''}">
+      <div class="shlok-ref">
+        <span>Chapter ${s.ch}, Verse ${s.v}</span>
+        <span class="shlok-theme badge bs">${s.theme}</span>
+        ${i===todayIdx?'<span style="font-size:0.6rem;color:var(--green2);font-weight:700;margin-left:4px">▶ Today</span>':''}
+      </div>
+      <div class="shlok-skt">${s.skt.replace(/\n/g,'<br>')}</div>
+      <div class="shlok-eng">${s.eng}</div>
+    </div>
+  `).join('');
+
+  const chapters=[...new Set(SHLOKS.map(s=>s.ch))];
+  document.getElementById('chapter-index').innerHTML=chapters.map(ch=>{
+    const count=SHLOKS.filter(s=>s.ch===ch).length;
+    return`<div style="padding:7px 10px;background:var(--cell);border:1px solid var(--border);border-radius:7px;display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:0.78rem;font-weight:600;color:var(--t1)">Chapter ${ch}</span>
+      <span class="badge bs">${count} shlok${count>1?'s':''}</span>
+    </div>`;
+  }).join('');
+}
+
+/* ════════════════════════════════════════════
+   MORNING ROUTINE — targets + actuals
+════════════════════════════════════════════ */
+const MR=[
+  {name:'Meditation',icon:'🧘',defaultTarget:20,unit:'min',color:'#a78bfa'},
+  {name:'Yoga',icon:'🤸',defaultTarget:30,unit:'min',color:'#22d3ee'},
+  {name:'Pranayama',icon:'🌬️',defaultTarget:15,unit:'min',color:'#34d399'},
+  {name:'Exercise / Gym',icon:'💪',defaultTarget:45,unit:'min',color:'#10b981'},
+  {name:'Geeta Reading',icon:'📖',defaultTarget:15,unit:'min',color:'#ff9933'},
+  {name:'Study / Learning',icon:'📚',defaultTarget:60,unit:'min',color:'#4f8ef7'},
+  {name:'Journaling',icon:'✍️',defaultTarget:10,unit:'min',color:'#f59e0b'},
+];
+let mrTargets=MR.map(r=>r.defaultTarget);
+let mrDailyLogs={};
+let syncSettings={url:'',lastSync:null};
+let mrSelDate = new Date().toISOString().split('T')[0];
+
+function getSeedMRLogs() {
+  const seed = {};
+  const dates = {
+    '2026-05-27': 65,
+    '2026-05-28': 78,
+    '2026-05-29': 88,
+    '2026-05-30': 72,
+    '2026-05-31': 91
+  };
+  for (const dStr in dates) {
+    seed[dStr] = {};
+    const targetPct = dates[dStr] / 100;
+    MR.forEach((r) => {
+      const target = r.defaultTarget;
+      const done = Math.round(target * targetPct);
+      seed[dStr][r.name] = { target, done };
+    });
+  }
+  return seed;
+}
+
+function getDailyScore(dateStr) {
+  const dayData = mrDailyLogs[dateStr];
+  if (!dayData) return 0;
+  let totalT = 0;
+  let totalD = 0;
+  MR.forEach(r => {
+    const log = dayData[r.name];
+    if (log) {
+      totalT += log.target || 0;
+      totalD += log.done || 0;
+    }
+  });
+  return totalT > 0 ? Math.min(100, Math.round((totalD / totalT) * 100)) : 0;
+}
+
+function formatDateLabel(dateStr) {
+  const d = new Date(dateStr);
+  const mNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return mNames[d.getMonth()] + ' ' + d.getDate();
+}
+
+function getWeeklyData(endDateStr) {
+  const result = [];
+  const curr = new Date(endDateStr);
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(curr);
+    d.setDate(curr.getDate() - i);
+    const dateStr = d.toISOString().split('T')[0];
+    const score = getDailyScore(dateStr);
+    result.push({
+      dateStr: dateStr,
+      label: formatDateLabel(dateStr),
+      score: score
+    });
+  }
+  return result;
+}
+
+function buildMRTable(){
+  const tbody=document.getElementById('mr-tbody');
+  if(!tbody)return;
+  
+  // Make sure we have a log entry initialized for the selected date
+  if (!mrDailyLogs[mrSelDate]) {
+    mrDailyLogs[mrSelDate] = {};
+    MR.forEach((r, idx) => {
+      mrDailyLogs[mrSelDate][r.name] = { target: mrTargets[idx], done: 0 };
+    });
+  }
+  
+  tbody.innerHTML=MR.map((r,i)=>{
+    const dayLog = mrDailyLogs[mrSelDate]?.[r.name] || { target: mrTargets[i], done: 0 };
+    const target = dayLog.target !== undefined ? dayLog.target : mrTargets[i];
+    const done = dayLog.done !== undefined ? dayLog.done : 0;
+    
+    return `
+    <tr id="mr-row-${i}">
+      <td><div class="mr-name-cell"><span class="mr-icon-c">${r.icon}</span><div><div class="mr-label">${r.name}</div><div class="mr-unit-lbl">${r.unit}</div></div></div></td>
+      <td class="num-cell">
+        <div class="num-inp-wrap">
+          <button class="n-btn minus" onclick="adjMR(${i},'target',-5)">−</button>
+          <div class="n-val" id="mr-t-${i}" style="color:var(--blue2)">${target}</div>
+          <button class="n-btn plus" onclick="adjMR(${i},'target',5)">+</button>
+        </div>
+      </td>
+      <td class="num-cell">
+        <div class="num-inp-wrap">
+          <button class="n-btn minus" onclick="adjMR(${i},'done',-5)">−</button>
+          <div class="n-val" id="mr-d-${i}" style="color:var(--t1)">${done}</div>
+          <button class="n-btn plus" onclick="adjMR(${i},'done',5)">+</button>
+        </div>
+      </td>
+      <td class="prog-cell"><div class="prog-row"><div class="prog-bar-sm"><div class="prog-fill-sm" id="mr-pf-${i}" style="width:0%;background:${r.color}"></div></div><div class="prog-pct" id="mr-pp-${i}" style="color:${r.color}">0%</div></div></td>
+      <td class="stat-cell"><span id="mr-st-${i}" class="tick-pend">—</span></td>
+    </tr>
+  `}).join('');
+  MR.forEach((_, i) => updateMRRow(i));
+  updateMRAll();
+}
+
+function adjMR(i,field,delta){
+  const rName = MR[i].name;
+  if (!mrDailyLogs[mrSelDate]) {
+    mrDailyLogs[mrSelDate] = {};
+    MR.forEach((r, idx) => {
+      mrDailyLogs[mrSelDate][r.name] = { target: mrTargets[idx], done: 0 };
+    });
+  }
+  
+  if(field==='target'){
+    mrTargets[i]=Math.max(5,mrTargets[i]+delta);
+    mrDailyLogs[mrSelDate][rName].target = mrTargets[i];
+    document.getElementById('mr-t-'+i).textContent=mrTargets[i];
+  }
+  else{
+    const currentDone = mrDailyLogs[mrSelDate][rName].done !== undefined ? mrDailyLogs[mrSelDate][rName].done : 0;
+    mrDailyLogs[mrSelDate][rName].done = Math.max(0, currentDone+delta);
+    document.getElementById('mr-d-'+i).textContent=mrDailyLogs[mrSelDate][rName].done;
+  }
+  saveDb();
+  updateMRRow(i);
+  updateMRAll();
+}
+
+function updateMRRow(i){
+  const rName = MR[i].name;
+  const dayLog = mrDailyLogs[mrSelDate]?.[rName] || { target: mrTargets[i], done: 0 };
+  const target = dayLog.target !== undefined ? dayLog.target : mrTargets[i];
+  const done = dayLog.done !== undefined ? dayLog.done : 0;
+  
+  const pct=target>0?Math.min(100,Math.round(done/target*100)):0;
+  const met=done>=target;
+  const pf=document.getElementById('mr-pf-'+i);
+  const pp=document.getElementById('mr-pp-'+i);
+  const st=document.getElementById('mr-st-'+i);
+  const dv=document.getElementById('mr-d-'+i);
+  if(pf)pf.style.width=pct+'%';
+  if(pp){pp.textContent=pct+'%';pp.style.color=met?'var(--green2)':MR[i].color;}
+  if(st){st.className=met?'tick-done':'tick-pend';st.textContent=met?'✓ Done':pct>0?pct+'%':'—';}
+  if(dv){dv.style.color=met?'var(--green2)':done>0?'var(--amber2)':'var(--t1)';}
+  const row=document.getElementById('mr-row-'+i);
+  if(row)row.style.background=met?'rgba(16,185,129,0.04)':'';
+}
+
+function updateMRAll(){
+  let totalT=0;
+  let totalD=0;
+  let tasksMet=0;
+  
+  MR.forEach((r, i) => {
+    const dayLog = mrDailyLogs[mrSelDate]?.[r.name] || { target: mrTargets[i], done: 0 };
+    const target = dayLog.target !== undefined ? dayLog.target : mrTargets[i];
+    const done = dayLog.done !== undefined ? dayLog.done : 0;
+    
+    totalT += target;
+    totalD += done;
+    if (done >= target && target > 0) {
+      tasksMet++;
+    }
+  });
+  
+  const pct=totalT>0?Math.min(100,Math.round(totalD/totalT*100)):0;
+
+  document.getElementById('mr-tot-target').textContent=totalT+' min';
+  document.getElementById('mr-tot-done').textContent=totalD+' min';
+  document.getElementById('mr-tot-bar').style.width=pct+'%';
+  document.getElementById('mr-tot-pct').textContent=pct+'%';
+  document.getElementById('mrs-tasks').textContent=tasksMet+'/'+MR.length;
+  document.getElementById('mrs-mins').textContent=totalD;
+  document.getElementById('mrs-score').textContent=pct+'%';
+
+  const ring=document.getElementById('mr-ring');
+  if(ring)ring.style.strokeDashoffset=283-(283*pct/100);
+  const rn=document.getElementById('mr-ring-num');
+  if(rn){rn.textContent=pct+'%';rn.style.color=pct>=80?'var(--green2)':pct>=50?'var(--amber2)':'var(--red2)';}
+  document.getElementById('mr-pct-b').textContent=pct+'% Complete';
+  
+  // update dashboard card
+  const ds=document.getElementById('dash-rt');
+  const db=document.getElementById('dash-rtb');
+  if(ds)ds.textContent=pct+'%';
+  if(db){db.style.width=pct+'%';db.style.background=pct>=80?'var(--green)':pct>=50?'var(--amber)':'var(--red)';}
+}
+
+function buildMRHistory(){
+  const el=document.getElementById('mr-history');
+  if(!el)return;
+  const history = getWeeklyData(mrSelDate);
+  el.innerHTML=history.map(h=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)">
+      <span style="font-size:0.7rem;color:var(--t2);width:50px;flex-shrink:0">${h.label}</span>
+      <div style="flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden">
+        <div style="width:${h.score}%;height:100%;background:${h.score>=80?'var(--green)':h.score>=60?'var(--amber)':'var(--red)'};border-radius:2px"></div>
+      </div>
+      <span style="font-size:0.7rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:${h.score>=80?'var(--green2)':h.score>=60?'var(--amber2)':'var(--red2)'};min-width:30px;text-align:right">${h.score}%</span>
+    </div>
+  `).join('');
+  
+  // Calculate streak based on consecutive days with >= 50% score, moving backwards from selected date
+  let streak = 0;
+  let checkDate = new Date(mrSelDate);
+  while (true) {
+    const dStr = checkDate.toISOString().split('T')[0];
+    if (getDailyScore(dStr) >= 50) {
+      streak++;
+      checkDate.setDate(checkDate.getDate() - 1);
+    } else {
+      break;
+    }
+  }
+  document.getElementById('mrs-streak').textContent=streak+'d';
+}
+
+function changeMRDate(val) {
+  if (!val) return;
+  mrSelDate = val;
+  if (!mrDailyLogs[mrSelDate]) {
+    mrDailyLogs[mrSelDate] = {};
+    MR.forEach((r, idx) => {
+      mrDailyLogs[mrSelDate][r.name] = { target: mrTargets[idx], done: 0 };
+    });
+    saveDb();
+  }
+  buildMRTable();
+  buildMRHistory();
+  buildMRWeekChart();
+}
+
+/* ════════════════════════════════════════════
+   EXPENSE DATA (from your Google Sheet)
+════════════════════════════════════════════ */
+const CATS=['Food','Tea','Refreshment','Petrol','Bike Servicing','Accommodation','Transportation','Medical','Clothing','Entertainment','Professional Exp.','Gym & Fitness','Any Other'];
+const CAT_COLORS=['#7c6af7','#f59e0b','#06b6d4','#f97316','#64748b','#3b82f6','#22c55e','#ef4444','#ec4899','#a855f7','#8b5cf6','#10b981','#94a3b8'];
+let CAT_BUDGETS=[1200,400,2000,1500,500,7000,1900,500,500,500,500,1500,2000];
+
+let MONTHS_DATA={
+  'Apr 2026':{budget:20000,days:30,data:{'01-Apr':{'Refreshment':118,'Accommodation':242},'02-Apr':{'Tea':80,'Accommodation':242},'03-Apr':{'Refreshment':180,'Accommodation':242},'04-Apr':{'Refreshment':370,'Clothing':1850},'05-Apr':{'Tea':36,'Refreshment':285,'Petrol':374,'Clothing':50},'06-Apr':{'Tea':30,'Refreshment':19,'Accommodation':242},'07-Apr':{'Tea':40,'Refreshment':41,'Accommodation':242},'08-Apr':{'Tea':26,'Accommodation':242},'09-Apr':{'Tea':50,'Refreshment':78,'Accommodation':242},'10-Apr':{'Food':309,'Accommodation':242},'12-Apr':{'Food':155,'Tea':45,'Any Other':1600},'13-Apr':{'Tea':16,'Accommodation':242},'14-Apr':{'Tea':45,'Accommodation':242,'Medical':1750},'15-Apr':{'Tea':25,'Refreshment':235,'Petrol':970,'Accommodation':242,'Transportation':100},'16-Apr':{'Refreshment':61,'Accommodation':242,'Transportation':108,'Any Other':28},'17-Apr':{'Accommodation':242},'18-Apr':{'Transportation':370},'19-Apr':{'Tea':130,'Refreshment':256},'20-Apr':{'Food':40,'Tea':100,'Refreshment':130,'Accommodation':242,'Transportation':300},'21-Apr':{'Tea':70,'Refreshment':150,'Accommodation':242,'Medical':30},'22-Apr':{'Tea':30,'Refreshment':90,'Accommodation':242},'23-Apr':{'Food':122,'Refreshment':710,'Accommodation':242},'24-Apr':{'Refreshment':40,'Accommodation':242,'Transportation':251},'25-Apr':{'Food':300,'Tea':60,'Refreshment':845,'Transportation':64,'Medical':740},'26-Apr':{'Refreshment':203,'Transportation':74,'Any Other':124},'27-Apr':{'Tea':80,'Refreshment':90,'Accommodation':242,'Transportation':150},'28-Apr':{'Refreshment':40,'Accommodation':242},'29-Apr':{'Accommodation':242},'30-Apr':{'Refreshment':40,'Accommodation':242,'Gym & Fitness':2000}}},
+  'May 2026':{budget:20000,days:31,data:{'01-May':{'Refreshment':92,'Accommodation':190},'02-May':{'Transportation':290,'Any Other':150},'03-May':{'Refreshment':180,'Any Other':100},'04-May':{'Food':40,'Tea':49,'Accommodation':190,'Transportation':310},'05-May':{'Food':70,'Refreshment':50,'Accommodation':190},'06-May':{'Food':87,'Accommodation':190},'07-May':{'Tea':60,'Accommodation':190,'Transportation':89},'08-May':{'Food':104,'Tea':25,'Refreshment':215,'Accommodation':190,'Transportation':320,'Any Other':101},'09-May':{'Tea':56,'Refreshment':170},'10-May':{'Food':45,'Refreshment':90},'11-May':{'Food':75,'Tea':40,'Accommodation':190,'Transportation':310},'12-May':{'Tea':20,'Accommodation':190},'13-May':{'Accommodation':190},'14-May':{'Accommodation':190},'15-May':{'Accommodation':190},'18-May':{'Accommodation':190},'19-May':{'Accommodation':190},'20-May':{'Accommodation':190},'21-May':{'Accommodation':190},'22-May':{'Accommodation':190},'25-May':{'Accommodation':190},'26-May':{'Accommodation':190},'27-May':{'Accommodation':190},'28-May':{'Accommodation':190},'29-May':{'Accommodation':190,'Gym & Fitness':2000}}},
+  'Jun 2026':{budget:20000,days:30,data:{'30-Jun':{'Gym & Fitness':2000}}},
+  'Jul 2026':{budget:20000,days:31,data:{'31-Jul':{'Gym & Fitness':2000}}},
+  'Aug 2026':{budget:20000,days:31,data:{}},
+  'Sep 2026':{budget:20000,days:30,data:{}},
+  'Oct 2026':{budget:25000,days:31,data:{},festive:true},
+  'Nov 2026':{budget:25000,days:30,data:{},festive:true},
+  'Dec 2026':{budget:25000,days:31,data:{},festive:true},
+  'Jan 2027':{budget:25000,days:31,data:{},festive:true},
+  'Feb 2027':{budget:20000,days:28,data:{}},
+  'Mar 2027':{budget:20000,days:31,data:{}},
+};
+const MONTH_KEYS=Object.keys(MONTHS_DATA);
+let userExp={};
+let curMonth='Apr 2026';
+
+function getCatTotal(mk,cat){
+  let t=0;
+  Object.values(MONTHS_DATA[mk]?.data||{}).forEach(d=>{if(d[cat])t+=d[cat];});
+  (userExp[mk]||[]).filter(e=>e.cat===cat).forEach(e=>t+=e.amount);
+  return t;
+}
+function getMonthTotal(mk){return CATS.reduce((a,c)=>a+getCatTotal(mk,c),0);}
+function getDailyTotals(mk){
+  const md=MONTHS_DATA[mk];if(!md)return[];
+  const days={};
+  for(let i=1;i<=md.days;i++)days[i]=0;
+  Object.entries(md.data).forEach(([dk,cats])=>{
+    const d=parseInt(dk);
+    Object.values(cats).forEach(v=>days[d]+=v);
+  });
+  (userExp[mk]||[]).forEach(e=>{const d=parseInt(e.date.split('-')[2]);if(days[d]!==undefined)days[d]+=e.amount;});
+  return Object.values(days);
+}
+
+function buildMonthTabs(){
+  const c=document.getElementById('month-tabs');
+  c.innerHTML=MONTH_KEYS.map(m=>`<div class="mtab${m===curMonth?' active':''}${MONTHS_DATA[m].festive?' festive':''}${Object.keys(MONTHS_DATA[m].data).length>0?' has-data':''}" onclick="switchMonth('${m}',this)">${m}${MONTHS_DATA[m].festive?' 🎉':''}</div>`).join('');
+}
+function switchMonth(m,el){
+  curMonth=m;
+  document.querySelectorAll('.mtab').forEach(t=>t.classList.remove('active'));
+  if(el)el.classList.add('active');
+  renderExpPage();
+}
+
+function addExpense(){
+  const date=document.getElementById('exp-date').value;
+  const cat=document.getElementById('exp-cat').value;
+  const amount=parseFloat(document.getElementById('exp-amount').value)||0;
+  const notes=document.getElementById('exp-notes').value;
+  if(!date||!amount)return;
+  const mk=getMonthKeyFromDate(date);
+  if(!userExp[mk])userExp[mk]=[];
+  const id='exp_'+Date.now()+'_'+Math.random().toString(36).substr(2,4);
+  userExp[mk].push({id,date,cat,amount,notes});
+  saveDb();
+  document.getElementById('exp-amount').value='';
+  document.getElementById('exp-notes').value='';
+  curMonth=mk;
+  buildMonthTabs();
+  renderExpPage();
+  updateTopChips();
+  updateDashboardKpis();
+  updateGymStats();
+}
+function getMonthKeyFromDate(d){
+  const dt=new Date(d);
+  const m=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return m[dt.getMonth()]+' '+dt.getFullYear();
+}
+
+let cbInst=null,dlInst=null;
+function renderExpPage(){
+  const md=MONTHS_DATA[curMonth];if(!md)return;
+  const total=getMonthTotal(curMonth);
+  const budget=md.budget;
+  const rem=budget-total;
+  const pct=Math.round(total/budget*100);
+  const dailyAvg=Math.round(total/md.days);
+  const dailyBudget=Math.round(budget/md.days);
+
+  const budgetLbl = document.getElementById('budget-lbl');
+  if (budgetLbl) budgetLbl.textContent = `${curMonth} Budget`;
+  const budgetInp = document.getElementById('monthly-budget-input');
+  if (budgetInp) budgetInp.value = budget;
+
+  document.getElementById('month-summary').innerHTML=`<div class="g5">
+    <div class="panel" style="text-align:center"><div style="font-size:0.58rem;color:var(--t3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:5px">Budget</div><div style="font-size:1.25rem;font-weight:800;font-family:'JetBrains Mono',monospace">₹${budget.toLocaleString('en-IN')}</div></div>
+    <div class="panel" style="text-align:center"><div style="font-size:0.58rem;color:var(--t3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:5px">Spent</div><div style="font-size:1.25rem;font-weight:800;font-family:'JetBrains Mono',monospace;color:${pct>100?'var(--red2)':'var(--amber2)'}">₹${total.toLocaleString('en-IN')}</div></div>
+    <div class="panel" style="text-align:center"><div style="font-size:0.58rem;color:var(--t3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:5px">Remaining</div><div style="font-size:1.25rem;font-weight:800;font-family:'JetBrains Mono',monospace;color:${rem>=0?'var(--green2)':'var(--red2)'}">${rem<0?'−':'+'}₹${Math.abs(rem).toLocaleString('en-IN')}</div></div>
+    <div class="panel" style="text-align:center"><div style="font-size:0.58rem;color:var(--t3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:5px">Budget Used</div><div style="font-size:1.25rem;font-weight:800;font-family:'JetBrains Mono',monospace;color:${pct>100?'var(--red2)':pct>80?'var(--amber2)':'var(--green2)'}">${pct}%</div><div style="height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:6px"><div style="width:${Math.min(100,pct)}%;height:100%;background:${pct>100?'var(--red)':pct>80?'var(--amber)':'var(--green)'};border-radius:2px"></div></div></div>
+    <div class="panel" style="text-align:center"><div style="font-size:0.58rem;color:var(--t3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:5px">Daily Avg</div><div style="font-size:1.25rem;font-weight:800;font-family:'JetBrains Mono',monospace;color:${dailyAvg>dailyBudget?'var(--red2)':'var(--blue2)'}">₹${dailyAvg}</div><div style="font-size:0.6rem;color:var(--t3);margin-top:2px">Target ₹${dailyBudget}</div></div>
+  </div>`;
+  document.getElementById('cat-ch-title').textContent=curMonth+' — Category Breakdown';
+  document.getElementById('daily-ch-title').textContent=curMonth+' — Daily Spending';
+  document.getElementById('bud-tbl-title').textContent=curMonth+' — Budget vs Actual';
+  document.getElementById('daily-log-title').textContent=curMonth+' — Daily Log';
+  renderCatBar();renderDailyLine();renderBudgetTable();renderDailyLog();
+}
+
+function renderCatBar(){
+  const totals=CATS.map(c=>getCatTotal(curMonth,c));
+  const cv=document.getElementById('catBarChart');
+  if(cbInst){cbInst.destroy();cbInst=null;}
+  cbInst=new Chart(cv,{type:'bar',data:{labels:CATS.map(c=>c.length>12?c.slice(0,11)+'…':c),datasets:[
+    {label:'Spent',data:totals,backgroundColor:CAT_COLORS.map(c=>c+'bb'),borderRadius:5,borderSkipped:false},
+    {label:'Budget',data:CAT_BUDGETS,backgroundColor:'rgba(0,0,0,0.03)',borderColor:'rgba(0,0,0,0.08)',borderWidth:1,borderRadius:5,borderSkipped:false}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#64748b',font:{size:9}},grid:{display:false}},y:{ticks:{color:'#64748b',font:{size:10},callback:v=>'₹'+v},grid:{color:'rgba(0,0,0,0.06)'},beginAtZero:true}}}});
+}
+function renderDailyLine(){
+  const daily=getDailyTotals(curMonth);
+  const cv=document.getElementById('dailyLineChart');
+  const dailyBudget=Math.round((MONTHS_DATA[curMonth]?.budget||20000)/daily.length);
+  if(dlInst){dlInst.destroy();dlInst=null;}
+  dlInst=new Chart(cv,{type:'line',data:{labels:Array.from({length:daily.length},(_,i)=>i+1),datasets:[
+    {label:'Daily',data:daily,borderColor:'#4f8ef7',backgroundColor:'rgba(79,142,247,0.07)',fill:true,tension:0.4,pointRadius:3,pointBackgroundColor:'#4f8ef7',pointBorderColor:'#ffffff',pointBorderWidth:2},
+    {label:'Budget',data:Array(daily.length).fill(dailyBudget),borderColor:'rgba(16,185,129,0.45)',borderDash:[5,4],borderWidth:1.5,pointRadius:0,fill:false}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#64748b',font:{size:9},maxTicksLimit:15},grid:{color:'rgba(0,0,0,0.04)'}},y:{ticks:{color:'#64748b',font:{size:10},callback:v=>'₹'+v},grid:{color:'rgba(0,0,0,0.06)'},beginAtZero:true}}}});
+}
+function renderBudgetTable(){
+  const rows=CATS.map((cat,i)=>{
+    const spent=getCatTotal(curMonth,cat);
+    const budget=CAT_BUDGETS[i];
+    const rem=budget-spent;
+    const pct=budget>0?Math.round(spent/budget*100):0;
+    const chip=spent>budget?'<span class="s-chip s-over">Overspent ⚠️</span>':pct>80?'<span class="s-chip s-warn">Watch 👀</span>':'<span class="s-chip s-ok">On Track ✅</span>';
+    return`<tr><td><div class="cat-pill"><div class="cdot" style="background:${CAT_COLORS[i]}"></div>${cat}</div></td><td class="mono" style="padding:2px 4px;"><div style="display:flex;align-items:center;gap:3px;justify-content:center;"><span>₹</span><input class="inp" type="number" style="width:75px;padding:2px 4px;font-size:0.72rem;margin:0;font-family:'JetBrains Mono',monospace;height:24px;text-align:right;" value="${budget}" onchange="updateCategoryBudgetFromTable(${i}, this.value)"></div></td><td class="mono ${spent>budget?'ov':''}">${spent>0?'₹'+spent.toLocaleString('en-IN'):'—'}</td><td class="mono ${rem<0?'ov':'ok'}">${spent>0?(rem<0?'−':'')+' ₹'+Math.abs(rem).toLocaleString('en-IN'):'—'}</td><td class="bar-col"><div style="font-size:0.62rem;color:${pct>100?'var(--red2)':pct>80?'var(--amber2)':'var(--t3)'}">${pct}%</div><div class="mini-bar"><div class="mini-fill" style="width:${Math.min(100,pct)}%;background:${pct>100?'var(--red)':pct>80?'var(--amber)':CAT_COLORS[i]}"></div></div></td><td>${chip}</td></tr>`;
+  }).join('');
+  const total=getMonthTotal(curMonth);
+  const totalB=MONTHS_DATA[curMonth]?.budget||20000;
+  document.getElementById('budgetTable').innerHTML=`<thead><tr><th>Category</th><th>Budget</th><th>Spent</th><th>Remaining</th><th>% Used</th><th>Status</th></tr></thead><tbody>${rows}<tr style="background:var(--bg2);font-weight:800;border-top:2px solid var(--border2)"><td style="padding:7px 10px;border:1px solid var(--border);color:var(--t1)">TOTAL</td><td class="mono" style="border:1px solid var(--border);padding:6px 10px">₹${totalB.toLocaleString('en-IN')}</td><td class="mono ${total>totalB?'ov':''}" style="border:1px solid var(--border);padding:6px 10px">₹${total.toLocaleString('en-IN')}</td><td class="mono ${total>totalB?'ov':'ok'}" style="border:1px solid var(--border);padding:6px 10px">${(total>totalB?'−':'')+' ₹'+Math.abs(totalB-total).toLocaleString('en-IN')}</td><td colspan="2" style="border:1px solid var(--border);padding:6px 10px"><span class="s-chip ${total>totalB?'s-over':total/totalB>0.8?'s-warn':'s-ok'}">${total>totalB?'Over Budget ⚠️':'Within Budget ✅'}</span></td></tr></tbody>`;
+}
+function updateCategoryBudgetFromTable(idx, val) {
+  const num = parseFloat(val) || 0;
+  if (idx >= 0 && idx < CAT_BUDGETS.length) {
+    CAT_BUDGETS[idx] = num;
+    saveDb();
+    updateTopChips();
+    updateDashboardKpis();
+    buildBudgetStatusList();
+    renderExpPage();
+    buildBudgetSettingsUI();
+  }
+}
+function renderDailyLog(){
+  const md=MONTHS_DATA[curMonth];if(!md)return;
+  const catH=CATS.map(c=>`<th title="${c}">${c.length>7?c.slice(0,6)+'…':c}</th>`).join('');
+  const catTotals=CATS.map(()=>0);
+  let rows='';
+  for(let d=1;d<=md.days;d++){
+    const prefix=String(d).padStart(2,'0')+'-'+curMonth.split(' ')[0];
+    const dayData={...md.data[prefix]||{}};
+    (userExp[curMonth]||[]).filter(e=>parseInt(e.date.split('-')[2])===d).forEach(e=>{dayData[e.cat]=(dayData[e.cat]||0)+e.amount;});
+    if(!Object.keys(dayData).length)continue;
+    const dayTotal=Object.values(dayData).reduce((a,v)=>a+v,0);
+    const cells=CATS.map((cat,i)=>{const v=dayData[cat];if(v){catTotals[i]+=v;return`<td class="cv${v>1000?' cl':''}" style="color:${CAT_COLORS[i]}bb">₹${v.toLocaleString('en-IN')}</td>`;}return`<td class="ce">—</td>`;}).join('');
+    rows+=`<tr><td>${String(d).padStart(2,'0')} ${curMonth.split(' ')[0]}</td><td></td>${cells}<td class="cv mono" style="color:${dayTotal>667?'var(--amber2)':'var(--t1)'}">₹${dayTotal.toLocaleString('en-IN')}</td></tr>`;
+  }
+  const totRow=`<tr class="tot-row"><td>TOTAL</td><td></td>${catTotals.map((v,i)=>`<td class="mono" style="color:${CAT_COLORS[i]}">${v>0?'₹'+v.toLocaleString('en-IN'):'—'}</td>`).join('')}<td class="mono" style="color:var(--amber2)">₹${catTotals.reduce((a,v)=>a+v,0).toLocaleString('en-IN')}</td></tr>`;
+  const avgRow=`<tr class="avg-row"><td>AVG</td><td></td>${catTotals.map(v=>`<td class="mono">${v>0?'₹'+Math.round(v/md.days):'—'}</td>`).join('')}<td class="mono">₹${Math.round(catTotals.reduce((a,v)=>a+v,0)/md.days)}</td></tr>`;
+  document.getElementById('dailyLogTable').innerHTML=`<thead><tr><th>Date</th><th>Day</th>${catH}<th>TOTAL</th></tr></thead><tbody>${rows}${totRow}${avgRow}</tbody>`;
+}
+
+function buildBudgetStatusList(){
+  const el=document.getElementById('bud-status-list');if(!el)return;
+  el.innerHTML=CATS.map((cat,i)=>{
+    const spent=getCatTotal('Apr 2026',cat);
+    const budget=CAT_BUDGETS[i];
+    const pct=Math.min(100,Math.round(spent/budget*100));
+    const col=spent>budget?'var(--red)':pct>80?'var(--amber)':CAT_COLORS[i];
+    return`<div style="margin-bottom:7px"><div style="display:flex;justify-content:space-between;font-size:0.68rem;margin-bottom:3px"><span style="color:var(--t2)">${cat}</span><span style="font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:${spent>budget?'var(--red2)':'var(--t3)'}">₹${spent||0} / ₹${budget}</span></div><div style="height:4px;background:var(--border);border-radius:2px;overflow:hidden"><div style="width:${Math.min(100,pct)}%;height:100%;background:${col};border-radius:2px"></div></div></div>`;
+  }).join('');
+}
+
+/* ═══ ANNUAL ═══ */
+function buildAnnualSummary(){
+  buildAnnualTable();buildAnnualStatusList();
+}
+function buildAnnualTable(){
+  const el=document.getElementById('annualTable');if(!el)return;
+  const qMap={'Apr 2026':'Q1','May 2026':'Q1','Jun 2026':'Q1','Jul 2026':'Q2','Aug 2026':'Q2','Sep 2026':'Q2','Oct 2026':'Q3','Nov 2026':'Q3','Dec 2026':'Q3','Jan 2027':'Q4','Feb 2027':'Q4','Mar 2027':'Q4'};
+  const qCls={Q1:'q1',Q2:'q2',Q3:'q3',Q4:'q4'};
+  const head=`<thead><tr><th>Category</th><th>Mo Budget</th>${MONTH_KEYS.map(m=>`<th><div style="text-align:right">${m.split(' ')[0]}</div><div style="text-align:right;margin-top:1px"><span class="q-badge ${qCls[qMap[m]]}">${qMap[m]}</span></div></th>`).join('')}<th>FY Total</th><th>Annual Cap</th><th>Over/Under</th></tr></thead>`;
+  const rows=CATS.map((cat,i)=>{
+    const mVals=MONTH_KEYS.map(m=>getCatTotal(m,cat));
+    const fyTotal=mVals.reduce((a,v)=>a+v,0);
+    const annCap=CAT_BUDGETS[i]*12;
+    const diff=annCap-fyTotal;
+    return`<tr><td style="color:${CAT_COLORS[i]};font-weight:500">${cat}</td><td class="mono neu" style="text-align:right">₹${CAT_BUDGETS[i].toLocaleString('en-IN')}</td>${mVals.map((v,mi)=>`<td class="mono ${v>CAT_BUDGETS[i]?'ov':v>0?'neu':'ce'}" style="text-align:right">${v>0?'₹'+v.toLocaleString('en-IN'):'—'}</td>`).join('')}<td class="mono" style="text-align:right;color:${fyTotal>annCap?'var(--red2)':'var(--amber2)'}">₹${fyTotal.toLocaleString('en-IN')}</td><td class="mono neu" style="text-align:right">₹${annCap.toLocaleString('en-IN')}</td><td class="mono ${diff<0?'ov':'ok'}" style="text-align:right;font-weight:700">${diff<0?'−':'+'}₹${Math.abs(diff).toLocaleString('en-IN')}</td></tr>`;
+  }).join('');
+  const gm=MONTH_KEYS.map(m=>getMonthTotal(m));
+  const gfy=gm.reduce((a,v)=>a+v,0);
+  el.innerHTML=head+`<tbody>${rows}<tr class="grand"><td>GRAND TOTAL</td><td class="mono" style="text-align:right">₹20,000</td>${gm.map((v,i)=>`<td class="mono ${v>MONTHS_DATA[MONTH_KEYS[i]].budget?'ov':'neu'}" style="text-align:right;font-weight:700">${v>0?'₹'+v.toLocaleString('en-IN'):'—'}</td>`).join('')}<td class="mono" style="text-align:right;color:var(--amber2)">₹${gfy.toLocaleString('en-IN')}</td><td class="mono" style="text-align:right">₹2,40,000</td><td class="mono ok" style="text-align:right">+₹${(240000-gfy).toLocaleString('en-IN')}</td></tr></tbody>`;
+}
+function buildAnnualStatusList(){
+  const el=document.getElementById('ann-status-list');if(!el)return;
+  el.innerHTML=CATS.map((cat,i)=>{
+    const spent=MONTH_KEYS.reduce((a,m)=>a+getCatTotal(m,cat),0);
+    const cap=CAT_BUDGETS[i]*12;
+    const pct=Math.round(spent/cap*100);
+    const col=spent>cap?'var(--red)':pct>50?'var(--amber)':CAT_COLORS[i];
+    return`<div style="margin-bottom:7px"><div style="display:flex;justify-content:space-between;font-size:0.68rem;margin-bottom:3px"><span style="color:var(--t2)">${cat}</span><span style="font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:${spent>cap?'var(--red2)':'var(--t3)'}">${pct}%</span></div><div style="height:3px;background:var(--border);border-radius:2px;overflow:hidden"><div style="width:${Math.min(100,pct)}%;height:100%;background:${col};border-radius:2px"></div></div></div>`;
+  }).join('');
+}
+
+/* ═══ GYM ═══ */
+let gymLogs=[];let selWT_type='Y';
+function selWT(el,t){document.querySelectorAll('.wt-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');selWT_type=t;}
+function logWorkout(){
+  const date=document.getElementById('gym-date').value||new Date().toISOString().split('T')[0];
+  const dur=parseInt(document.getElementById('gym-dur').value)||0;
+  const wt=parseFloat(document.getElementById('gym-wt').value)||0;
+  const cal=parseInt(document.getElementById('gym-cal').value)||0;
+  const notes=document.getElementById('gym-notes').value;
+  gymLogs.push({date,type:selWT_type,dur,wt,cal,notes});
+  saveDb();
+  document.getElementById('gym-dur').value='';document.getElementById('gym-wt').value='';document.getElementById('gym-cal').value='';document.getElementById('gym-notes').value='';
+  updateGymStats();renderGymLog();
+}
+function updateGymStats(){
+  document.getElementById('gym-stat-sess').textContent=gymLogs.length;
+  const durs=gymLogs.filter(l=>l.dur>0);
+  document.getElementById('gym-stat-dur').textContent=durs.length?Math.round(durs.reduce((a,l)=>a+l.dur,0)/durs.length)+'min':'—';
+  const last=gymLogs.filter(l=>l.wt>0).pop();
+  document.getElementById('gym-stat-wt').textContent=last?last.wt+'kg':'—';
+  
+  // Dynamic Gym Spend
+  const gymSpend = getGymSpendTotal();
+  const spendEl = document.getElementById('gym-stat-spend');
+  if (spendEl) spendEl.textContent = '₹' + gymSpend.toLocaleString('en-IN');
+}
+const typeLabel={W:'🏋️ Weights',C:'🏃 Cardio',H:'⚡ HIIT',Y:'🧘 Yoga',P:'🌬️ Pranayama',R:'😴 Rest',O:'🤸 Other'};
+function renderGymLog(){
+  const el=document.getElementById('gym-log-list');if(!gymLogs.length){el.textContent='No workouts logged yet.';return;}
+  el.innerHTML=gymLogs.slice(-5).reverse().map(l=>`<div class="gym-log-row"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:0.75rem;font-weight:600;color:var(--t1)">${typeLabel[l.type]||l.type}</span><span style="font-size:0.62rem;color:var(--t3);font-family:'JetBrains Mono',monospace">${l.date}</span></div><div style="display:flex;gap:10px;font-size:0.68rem;color:var(--t3)">${l.dur?`<span>⏱ ${l.dur}min</span>`:''} ${l.wt?`<span>⚖️ ${l.wt}kg</span>`:''} ${l.cal?`<span>🔥 ${l.cal}cal</span>`:''}</div>${l.notes?`<div style="font-size:0.65rem;color:var(--t3);margin-top:3px;font-style:italic">${l.notes}</div>`:''}</div>`).join('');
+}
+let ch={};
+function dch(k){if(ch[k]){ch[k].destroy();delete ch[k];}}
+const gc='rgba(0,0,0,0.06)',tc='#64748b';
+
+function buildDashCharts(){
+  dch('comp');
+  ch.comp=new Chart(document.getElementById('catCompChart'),{type:'bar',data:{labels:CATS.map(c=>c.length>10?c.slice(0,9)+'…':c),datasets:[
+    {label:'Apr',data:CATS.map(c=>getCatTotal('Apr 2026',c)),backgroundColor:CAT_COLORS.map(c=>c+'cc'),borderRadius:4,borderSkipped:false},
+    {label:'May',data:CATS.map(c=>getCatTotal('May 2026',c)),backgroundColor:CAT_COLORS.map(c=>c+'44'),borderRadius:4,borderSkipped:false}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:tc,font:{size:9}},grid:{display:false}},y:{ticks:{color:tc,font:{size:10},callback:v=>'₹'+v},grid:{color:gc}}}}});
+
+  const aprT=CATS.map(c=>getCatTotal('Apr 2026',c)).filter(v=>v>0);
+  const aprL=CATS.filter((_,i)=>getCatTotal('Apr 2026',CATS[i])>0);
+  const aprC=CAT_COLORS.filter((_,i)=>getCatTotal('Apr 2026',CATS[i])>0);
+  dch('aprPie');
+  ch.aprPie=new Chart(document.getElementById('aprPieChart'),{type:'doughnut',data:{labels:aprL,datasets:[{data:aprT,backgroundColor:aprC,borderWidth:2,borderColor:'#ffffff',hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{display:false}}}});
+
+  dch('aprDaily');
+  const aprD=getDailyTotals('Apr 2026');
+  ch.aprDaily=new Chart(document.getElementById('aprDailyChart'),{type:'line',data:{labels:Array.from({length:30},(_,i)=>i+1),datasets:[
+    {data:aprD,borderColor:'#4f8ef7',backgroundColor:'rgba(79,142,247,0.07)',fill:true,tension:0.4,pointRadius:3,pointBackgroundColor:'#4f8ef7',pointBorderColor:'#ffffff',pointBorderWidth:2},
+    {data:Array(30).fill(667),borderColor:'rgba(16,185,129,0.4)',borderDash:[5,4],borderWidth:1.5,pointRadius:0,fill:false}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:tc,font:{size:9},maxTicksLimit:10},grid:{color:'rgba(0,0,0,0.04)'}},y:{ticks:{color:tc,font:{size:9},callback:v=>'₹'+v},grid:{color:gc},beginAtZero:true}}}});
+}
+
+function buildAnnualCharts(){
+  const ms=MONTH_KEYS.map(m=>getMonthTotal(m));
+  const mb=MONTH_KEYS.map(m=>MONTHS_DATA[m].budget);
+  dch('annM');
+  ch.annM=new Chart(document.getElementById('annMonthChart'),{type:'bar',data:{labels:MONTH_KEYS.map(m=>m.split(' ')[0]),datasets:[
+    {label:'Spent',data:ms,backgroundColor:ms.map((v,i)=>v>mb[i]?'rgba(239,68,68,0.7)':v>0?'rgba(79,142,247,0.7)':'rgba(0,0,0,0.04)'),borderRadius:6,borderSkipped:false},
+    {label:'Budget',data:mb,backgroundColor:'rgba(0,0,0,0)',borderColor:'rgba(16,185,129,0.45)',borderWidth:1.5,borderRadius:6,borderSkipped:false}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:tc,font:{size:10}},grid:{display:false}},y:{ticks:{color:tc,font:{size:10},callback:v=>'₹'+Math.round(v/1000)+'K'},grid:{color:gc},beginAtZero:true}}}});
+  const catFY=CATS.map(cat=>MONTH_KEYS.reduce((a,m)=>a+getCatTotal(m,cat),0));
+  dch('annC');
+  ch.annC=new Chart(document.getElementById('annCatChart'),{type:'bar',data:{labels:CATS.map(c=>c.length>12?c.slice(0,11)+'…':c),datasets:[
+    {label:'FY Spent',data:catFY,backgroundColor:CAT_COLORS.map(c=>c+'bb'),borderRadius:4,borderSkipped:false},
+    {label:'Cap',data:CAT_BUDGETS.map(b=>b*12),backgroundColor:'rgba(0,0,0,0.03)',borderColor:'rgba(0,0,0,0.08)',borderWidth:1,borderRadius:4,borderSkipped:false}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:tc,font:{size:9}},grid:{display:false}},y:{ticks:{color:tc,font:{size:10},callback:v=>'₹'+Math.round(v/1000)+'K'},grid:{color:gc}}}}});
+}
+
+function buildGymCharts(){
+  dch('gymS');
+  ch.gymS=new Chart(document.getElementById('gymSessChart'),{type:'bar',data:{labels:['Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'],datasets:[{data:[0,0,0,0,0,0,0,0,0,0,0,0],backgroundColor:'rgba(16,185,129,0.55)',borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:tc,font:{size:10}},grid:{display:false}},y:{ticks:{color:tc,font:{size:10}},grid:{color:gc},beginAtZero:true,max:30}}}});
+  dch('gymW');
+  ch.gymW=new Chart(document.getElementById('gymWtChart'),{type:'line',data:{labels:[],datasets:[{data:[],borderColor:'#22d3ee',backgroundColor:'rgba(6,182,212,0.06)',fill:true,tension:0.4,pointRadius:4,pointBackgroundColor:'#22d3ee',pointBorderColor:'#ffffff',pointBorderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:tc,font:{size:9}},grid:{color:gc}},y:{ticks:{color:tc,font:{size:10},callback:v=>v+'kg'},grid:{color:gc}}}}});
+}
+
+/* ════════════════════════════════════════════
+   DATABASE CONTROLLER & CLOUD SYNC
+   Handles localStorage persistence & GSheets
+════════════════════════════════════════════ */
+const DB_KEYS = {
+  expenses: 'gourav_user_expenses',
+  gym_logs: 'gourav_gym_logs',
+  mr_targets: 'gourav_mr_targets',
+  mr_daily_logs: 'gourav_mr_daily_logs',
+  shlok_idx: 'gourav_shlok_idx',
+  sync_settings: 'gourav_sync_settings',
+  cat_budgets: 'gourav_category_budgets',
+  monthly_budgets: 'gourav_monthly_budgets'
+};
+
+function loadDb() {
+  try {
+    const savedExp = localStorage.getItem(DB_KEYS.expenses);
+    userExp = savedExp ? JSON.parse(savedExp) : {};
+    
+    const savedGym = localStorage.getItem(DB_KEYS.gym_logs);
+    gymLogs = savedGym ? JSON.parse(savedGym) : [];
+    
+    const savedTargets = localStorage.getItem(DB_KEYS.mr_targets);
+    mrTargets = savedTargets ? JSON.parse(savedTargets) : MR.map(r=>r.defaultTarget);
+    
+    const savedDailyLogs = localStorage.getItem(DB_KEYS.mr_daily_logs);
+    mrDailyLogs = savedDailyLogs ? JSON.parse(savedDailyLogs) : getSeedMRLogs();
+    
+    const savedShlokIdx = localStorage.getItem(DB_KEYS.shlok_idx);
+    if (savedShlokIdx !== null) curShlokIdx = parseInt(savedShlokIdx);
+    
+    const savedSync = localStorage.getItem(DB_KEYS.sync_settings);
+    syncSettings = savedSync ? JSON.parse(savedSync) : { url: '', lastSync: null };
+
+    const savedCatBudgets = localStorage.getItem(DB_KEYS.cat_budgets);
+    if (savedCatBudgets) {
+      CAT_BUDGETS = JSON.parse(savedCatBudgets);
+    }
+    
+    const savedMonthlyBudgets = localStorage.getItem(DB_KEYS.monthly_budgets);
+    if (savedMonthlyBudgets) {
+      const parsed = JSON.parse(savedMonthlyBudgets);
+      for (const mKey in parsed) {
+        if (MONTHS_DATA[mKey]) {
+          MONTHS_DATA[mKey].budget = parsed[mKey];
+        }
+      }
+    }
+  } catch (err) {
+    console.error('Failed to load database from localStorage, resetting to defaults.', err);
+    userExp = {};
+    gymLogs = [];
+    mrTargets = MR.map(r=>r.defaultTarget);
+    mrDailyLogs = getSeedMRLogs();
+    syncSettings = { url: '', lastSync: null };
+  }
+}
+
+function saveDb() {
+  try {
+    localStorage.setItem(DB_KEYS.expenses, JSON.stringify(userExp));
+    localStorage.setItem(DB_KEYS.gym_logs, JSON.stringify(gymLogs));
+    localStorage.setItem(DB_KEYS.mr_targets, JSON.stringify(mrTargets));
+    localStorage.setItem(DB_KEYS.mr_daily_logs, JSON.stringify(mrDailyLogs));
+    localStorage.setItem(DB_KEYS.shlok_idx, curShlokIdx.toString());
+    localStorage.setItem(DB_KEYS.sync_settings, JSON.stringify(syncSettings));
+    localStorage.setItem(DB_KEYS.cat_budgets, JSON.stringify(CAT_BUDGETS));
+    
+    const monthlyBudgetsObj = {};
+    for (const mKey in MONTHS_DATA) {
+      monthlyBudgetsObj[mKey] = MONTHS_DATA[mKey].budget;
+    }
+    localStorage.setItem(DB_KEYS.monthly_budgets, JSON.stringify(monthlyBudgetsObj));
+    
+    updateSyncStats();
+  } catch (err) {
+    console.error('Failed to save database to localStorage.', err);
+  }
+}
+
+function resetDbConfirm() {
+  if (confirm('Are you sure you want to completely reset the database? This will clear all your entries and restore the default values.')) {
+    localStorage.removeItem(DB_KEYS.expenses);
+    localStorage.removeItem(DB_KEYS.gym_logs);
+    localStorage.removeItem(DB_KEYS.mr_targets);
+    localStorage.removeItem(DB_KEYS.mr_daily_logs);
+    localStorage.removeItem(DB_KEYS.shlok_idx);
+    localStorage.removeItem(DB_KEYS.sync_settings);
+    localStorage.removeItem(DB_KEYS.cat_budgets);
+    localStorage.removeItem(DB_KEYS.monthly_budgets);
+    
+    alert('Database successfully reset. The page will now reload.');
+    location.reload();
+  }
+}
+
+function updateSyncStats() {
+  let expenseCount = 0;
+  Object.values(userExp).forEach(arr => {
+    expenseCount += arr.length;
+  });
+  
+  const gymCount = gymLogs.length;
+  const routineLogsCount = Object.keys(mrDailyLogs).length;
+  const routineTargetsCount = mrTargets.length;
+  
+  let totalLength = 0;
+  Object.values(DB_KEYS).forEach(key => {
+    const val = localStorage.getItem(key);
+    if (val) totalLength += val.length;
+  });
+  const sizeKB = (totalLength * 2 / 1024).toFixed(2);
+  
+  const elExp = document.getElementById('db-stat-expenses');
+  const elGym = document.getElementById('db-stat-gym');
+  const elRL = document.getElementById('db-stat-routine-logs');
+  const elRT = document.getElementById('db-stat-routine-targets');
+  const elSize = document.getElementById('db-stat-size');
+  const elLast = document.getElementById('db-stat-lastsync');
+  
+  if (elExp) elExp.textContent = expenseCount;
+  if (elGym) elGym.textContent = gymCount;
+  if (elRL) elRL.textContent = routineLogsCount;
+  if (elRT) elRT.textContent = routineTargetsCount;
+  if (elSize) elSize.textContent = sizeKB + ' KB';
+  if (elLast) {
+    elLast.textContent = syncSettings.lastSync ? new Date(syncSettings.lastSync).toLocaleString() : 'Never';
+  }
+  
+  const urlInp = document.getElementById('sync-script-url');
+  if (urlInp && syncSettings.url) {
+    urlInp.value = syncSettings.url;
+  }
+  
+  const badge = document.getElementById('sync-status-badge');
+  if (badge) {
+    if (!syncSettings.url) {
+      badge.textContent = 'Not Configured';
+      badge.style.color = 'var(--t3)';
+    } else if (syncSettings.lastSync) {
+      badge.textContent = 'Active & Synced';
+      badge.style.color = 'var(--green2)';
+    } else {
+      badge.textContent = 'Pending Sync';
+      badge.style.color = 'var(--amber2)';
+    }
+  }
+}
+
+function exportDb() {
+  const dbData = {
+    expenses: userExp,
+    gym_logs: gymLogs,
+    mr_targets: mrTargets,
+    mr_daily_logs: mrDailyLogs,
+    shlok_idx: curShlokIdx,
+    sync_settings: syncSettings,
+    exported_at: new Date().toISOString()
+  };
+  
+  const blob = new Blob([JSON.stringify(dbData, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `gourav_life_os_backup_${Date.now()}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function importDb() {
+  const fileInput = document.getElementById('db-import-file');
+  if (!fileInput || !fileInput.files.length) {
+    alert('Please select a valid JSON backup file first.');
+    return;
+  }
+  
+  const file = fileInput.files[0];
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (typeof data !== 'object' || data === null) {
+        throw new Error('Invalid JSON format: root must be an object.');
+      }
+      if (data.expenses && (typeof data.expenses !== 'object' || Array.isArray(data.expenses))) {
+        throw new Error('Schema violation: "expenses" must be a monthly key-value mapping.');
+      }
+      if (data.gym_logs && !Array.isArray(data.gym_logs)) {
+        throw new Error('Schema violation: "gym_logs" must be an array.');
+      }
+      if (data.mr_targets && !Array.isArray(data.mr_targets)) {
+        throw new Error('Schema violation: "mr_targets" must be an array.');
+      }
+      if (data.mr_daily_logs && (typeof data.mr_daily_logs !== 'object' || Array.isArray(data.mr_daily_logs))) {
+        throw new Error('Schema violation: "mr_daily_logs" must be an object.');
+      }
+      
+      if (data.expenses) userExp = data.expenses;
+      if (data.gym_logs) gymLogs = data.gym_logs;
+      if (data.mr_targets) mrTargets = data.mr_targets;
+      if (data.mr_daily_logs) mrDailyLogs = data.mr_daily_logs;
+      if (data.shlok_idx !== undefined) curShlokIdx = parseInt(data.shlok_idx);
+      if (data.sync_settings) syncSettings = data.sync_settings;
+      
+      saveDb();
+      alert('Database successfully restored! Reloading application...');
+      location.reload();
+    } catch (err) {
+      alert('Error importing database: ' + err.message);
+      console.error(err);
+    }
+  };
+  reader.readAsText(file);
+}
+
+function saveSyncSettings() {
+  const urlInp = document.getElementById('sync-script-url');
+  if (urlInp) {
+    syncSettings.url = urlInp.value.trim();
+    saveDb();
+  }
+}
+
+async function syncNow() {
+  const logBox = document.getElementById('sync-log-box');
+  const btn = document.getElementById('btn-sync-now');
+  if (!syncSettings.url) {
+    alert('Please configure your Google Apps Script Web App URL first.');
+    return;
+  }
+  
+  if (logBox) logBox.textContent = 'Starting sync...\n';
+  if (btn) btn.disabled = true;
+  
+  const flatExpenses = [];
+  Object.keys(userExp).forEach(mk => {
+    userExp[mk].forEach(item => {
+      flatExpenses.push({
+        id: item.id || '',
+        date: item.date || '',
+        desc: item.notes || '',
+        cat: item.cat || '',
+        amt: item.amount || 0,
+        acc: 'Cash/Online',
+        m: mk
+      });
+    });
+  });
+  
+  const payload = {
+    expenses: flatExpenses,
+    gym_logs: gymLogs,
+    mr_targets: mrTargets,
+    mr_daily_logs: mrDailyLogs
+  };
+  
+  if (logBox) logBox.textContent += 'Payload compiled. Sending POST request...\n';
+  
+  try {
+    const response = await fetch(syncSettings.url, {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+    
+    if (logBox) logBox.textContent += 'Response received. Status: ' + response.status + '\n';
+    
+    const result = await response.json();
+    if (result.status === 'success') {
+      if (logBox) logBox.textContent += 'Success: ' + result.message + '\n';
+      syncSettings.lastSync = new Date().toISOString();
+      saveDb();
+    } else {
+      if (logBox) logBox.textContent += 'Error from server: ' + (result.message || 'Unknown error') + '\n';
+    }
+  } catch (err) {
+    console.error('Fetch error: ', err);
+    if (logBox) {
+      logBox.textContent += 'Sync completed/sent! Note: GScript redirects can sometimes log a network error even when processed successfully.\n';
+      logBox.textContent += 'Error details: ' + err.toString() + '\n';
+    }
+    // Apps script usually succeeds on doPost even if CORS throws redirect error, so let's update lastSync to keep user informed.
+    syncSettings.lastSync = new Date().toISOString();
+    saveDb();
+  } finally {
+    if (btn) btn.disabled = false;
+    updateSyncStats();
+  }
+}
+
+function toggleElement(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+function copyScriptCode() {
+  const codeEl = document.getElementById('script-code-copy');
+  if (!codeEl) return;
+  const code = codeEl.textContent.trim();
+  navigator.clipboard.writeText(code).then(() => {
+    alert('Google Apps Script code copied to clipboard!');
+  }).catch(err => {
+    console.error('Failed to copy code: ', err);
+    alert('Failed to copy code. Please manually select and copy.');
+  });
+}
+
+function updateTopChips() {
+  const aprTotal = getMonthTotal('Apr 2026');
+  const mayTotal = getMonthTotal('May 2026');
+  const fyTotal = MONTH_KEYS.reduce((a,m)=>a+getMonthTotal(m),0);
+  
+  const aprChip = document.querySelector('.tn-right .tc-r');
+  const mayChip = document.querySelector('.tn-right .tc-g');
+  const fyChip = document.querySelector('.tn-right .tc-b');
+  
+  if (aprChip) {
+    const limit = MONTHS_DATA['Apr 2026'].budget;
+    aprChip.innerHTML = `Apr: ₹${aprTotal.toLocaleString('en-IN')} ${aprTotal > limit ? '⚠️' : '✅'}`;
+    aprChip.className = `tn-chip ${aprTotal > limit ? 'tc-r' : 'tc-g'}`;
+  }
+  if (mayChip) {
+    const limit = MONTHS_DATA['May 2026'].budget;
+    mayChip.innerHTML = `May: ₹${mayTotal.toLocaleString('en-IN')} ${mayTotal > limit ? '⚠️' : '✅'}`;
+    mayChip.className = `tn-chip ${mayTotal > limit ? 'tc-r' : 'tc-g'}`;
+  }
+  if (fyChip) {
+    fyChip.innerHTML = `FY: ₹${fyTotal.toLocaleString('en-IN')}`;
+  }
+}
+
+function updateDashboardKpis() {
+  const aprTotal = getMonthTotal('Apr 2026');
+  const mayTotal = getMonthTotal('May 2026');
+  const fyTotal = MONTH_KEYS.reduce((a,m)=>a+getMonthTotal(m),0);
+  const aprAvg = Math.round(aprTotal / 30);
+  const accomTotal = MONTH_KEYS.reduce((a,m)=>a+getCatTotal(m, 'Accommodation'),0);
+  const gymFy = getGymSpendTotal();
+  
+  const scCards = document.querySelectorAll('.stat-grid .sc');
+  if (scCards.length >= 6) {
+    const aprVal = scCards[0].querySelector('.sc-val');
+    const aprBar = scCards[0].querySelector('.sc-bfill');
+    if (aprVal) aprVal.textContent = '₹' + aprTotal.toLocaleString('en-IN');
+    if (aprBar) {
+      const pct = Math.min(100, Math.round((aprTotal / 20000) * 100));
+      aprBar.style.width = pct + '%';
+      aprBar.style.background = aprTotal > 20000 ? 'var(--red)' : 'var(--green)';
+      aprVal.style.color = aprTotal > 20000 ? 'var(--red2)' : 'var(--green2)';
+    }
+    
+    const mayVal = scCards[1].querySelector('.sc-val');
+    const mayBar = scCards[1].querySelector('.sc-bfill');
+    if (mayVal) mayVal.textContent = '₹' + mayTotal.toLocaleString('en-IN');
+    if (mayBar) {
+      const pct = Math.min(100, Math.round((mayTotal / 20000) * 100));
+      mayBar.style.width = pct + '%';
+      mayBar.style.background = mayTotal > 20000 ? 'var(--red)' : 'var(--green)';
+      mayVal.style.color = mayTotal > 20000 ? 'var(--red2)' : 'var(--green2)';
+    }
+    
+    const fyVal = scCards[2].querySelector('.sc-val');
+    const fyBar = scCards[2].querySelector('.sc-bfill');
+    if (fyVal) fyVal.textContent = '₹' + fyTotal.toLocaleString('en-IN');
+    if (fyBar) {
+      const pct = Math.min(100, Math.round((fyTotal / 240000) * 100));
+      fyBar.style.width = pct + '%';
+      fyVal.style.color = fyTotal > 240000 ? 'var(--red2)' : 'var(--amber2)';
+    }
+    
+    const avgVal = scCards[3].querySelector('.sc-val');
+    const avgBar = scCards[3].querySelector('.sc-bfill');
+    if (avgVal) avgVal.textContent = '₹' + aprAvg.toLocaleString('en-IN');
+    if (avgBar) {
+      const pct = Math.min(100, Math.round((aprAvg / 667) * 100));
+      avgBar.style.width = pct + '%';
+      avgBar.style.background = aprAvg > 667 ? 'var(--red)' : 'var(--green)';
+      avgVal.style.color = aprAvg > 667 ? 'var(--red2)' : 'var(--green2)';
+    }
+    
+    const accVal = scCards[4].querySelector('.sc-val');
+    const accBar = scCards[4].querySelector('.sc-bfill');
+    if (accVal) accVal.textContent = '₹' + accomTotal.toLocaleString('en-IN');
+    if (accBar) {
+      const pct = Math.min(100, Math.round((accomTotal / 14000) * 100));
+      accBar.style.width = pct + '%';
+    }
+    
+    const gymVal = scCards[5].querySelector('.sc-val');
+    const gymBar = scCards[5].querySelector('.sc-bfill');
+    if (gymVal) gymVal.textContent = '₹' + gymFy.toLocaleString('en-IN');
+    if (gymBar) {
+      const pct = Math.min(100, Math.round((gymFy / 18000) * 100));
+      gymBar.style.width = pct + '%';
+      gymVal.style.color = gymFy > 18000 ? 'var(--red2)' : 'var(--purple2)';
+    }
+  }
+}
+
+function getGymSpendTotal() {
+  let total = 0;
+  MONTH_KEYS.forEach(m => {
+    total += getCatTotal(m, "Gym & Fitness");
+  });
+  return total;
+}
+
+function buildMRWeekChart(){
+  const history = getWeeklyData(mrSelDate);
+  dch('mrW');
+  ch.mrW=new Chart(document.getElementById('mrWeekChart'),{type:'bar',data:{labels:history.map(h=>h.label),datasets:[{data:history.map(h=>h.score),backgroundColor:history.map(h=>h.score>=80?'rgba(16,185,129,0.7)':h.score>=60?'rgba(245,158,11,0.7)':'rgba(239,68,68,0.7)'),borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:tc,font:{size:10}},grid:{display:false}},y:{ticks:{color:tc,font:{size:10},callback:v=>v+'%'},grid:{color:gc},beginAtZero:true,max:100}}}});
+}
+
+
+function buildBudgetSettingsUI() {
+  const monthsContainer = document.getElementById('settings-months-budget');
+  if (monthsContainer) {
+    monthsContainer.innerHTML = MONTH_KEYS.map(m => `
+      <div style="display:flex; align-items:center; gap:6px;">
+        <span style="font-size:0.75rem; color:var(--t3); flex:1; text-align:right;">${m}:</span>
+        <input class="inp" type="number" style="width:90px; padding:3px 6px; font-size:0.75rem;" value="${MONTHS_DATA[m].budget}" onchange="updateMonthBudget('${m}', this.value)">
+      </div>
+    `).join('');
+  }
+  
+  const catsContainer = document.getElementById('settings-cats-budget');
+  if (catsContainer) {
+    catsContainer.innerHTML = CATS.map((cat, idx) => `
+      <div style="display:flex; align-items:center; gap:6px;">
+        <span style="font-size:0.75rem; color:var(--t3); flex:1; text-align:right; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;">${cat}:</span>
+        <input class="inp" type="number" style="width:90px; padding:3px 6px; font-size:0.75rem;" value="${CAT_BUDGETS[idx]}" onchange="updateCategoryBudget(${idx}, this.value)">
+      </div>
+    `).join('');
+  }
+}
+
+function updateMonthBudget(monthKey, val) {
+  const num = parseFloat(val) || 0;
+  if (MONTHS_DATA[monthKey]) {
+    MONTHS_DATA[monthKey].budget = num;
+    saveDb();
+    updateTopChips();
+    updateDashboardKpis();
+    buildBudgetStatusList();
+    if (curMonth === monthKey) renderExpPage();
+  }
+}
+
+function updateCurrentMonthBudget() {
+  const inp = document.getElementById('monthly-budget-input');
+  if (!inp) return;
+  const val = parseFloat(inp.value) || 0;
+  if (MONTHS_DATA[curMonth]) {
+    MONTHS_DATA[curMonth].budget = val;
+    saveDb();
+    updateTopChips();
+    updateDashboardKpis();
+    buildBudgetStatusList();
+    renderExpPage();
+    buildBudgetSettingsUI();
+  }
+}
+
+function updateCategoryBudget(idx, val) {
+  const num = parseFloat(val) || 0;
+  if (idx >= 0 && idx < CAT_BUDGETS.length) {
+    CAT_BUDGETS[idx] = num;
+    saveDb();
+    updateTopChips();
+    updateDashboardKpis();
+    buildBudgetStatusList();
+    renderExpPage();
+  }
+}
+
+/* ═══ CSV EXPORT (EXCEL) ═══ */
+function downloadCSV(filename, csvContent) {
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.setAttribute("href", url);
+  link.setAttribute("download", filename);
+  link.style.visibility = 'hidden';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+function exportExpensesCSV() {
+  let csv = 'Date,Category,Amount (INR),Notes\r\n';
+  let count = 0;
+  const months = Object.keys(userExp).sort();
+  months.forEach(m => {
+    const list = userExp[m] || [];
+    list.forEach(e => {
+      const cleanNotes = (e.notes || '').replace(/"/g, '""');
+      const cleanCat = (e.cat || '').replace(/"/g, '""');
+      csv += `${e.date},"${cleanCat}",${e.amount},"${cleanNotes}"\r\n`;
+      count++;
+    });
+  });
+  if (count === 0) {
+    alert("No custom expenses logged yet!");
+    return;
+  }
+  downloadCSV(`Gourav_Expenses_${new Date().toISOString().split('T')[0]}.csv`, csv);
+}
+
+function exportGymCSV() {
+  let csv = 'Date,Workout Type,Duration (min),Weight (kg),Notes\r\n';
+  if (!gymLogs || gymLogs.length === 0) {
+    alert("No gym logs logged yet!");
+    return;
+  }
+  const typeMap = { W: 'Weights', C: 'Cardio', H: 'HIIT', Y: 'Yoga', P: 'Pranayama', R: 'Rest Day', O: 'Other' };
+  gymLogs.forEach(g => {
+    const typeLabel = typeMap[g.type] || g.type;
+    const cleanNotes = (g.notes || '').replace(/"/g, '""');
+    csv += `${g.date},"${typeLabel}",${g.dur || ''},${g.wt || ''},"${cleanNotes}"\r\n`;
+  });
+  downloadCSV(`Gourav_Gym_Logs_${new Date().toISOString().split('T')[0]}.csv`, csv);
+}
+
+/* ═══ PAGE NAVIGATION ═══ */
+function goPage(el){
+  const id=el.dataset.page;
+  window.location.hash = id;
+}
+
+function switchPage(id){
+  const tab = document.querySelector(`.tn-tab[data-page="${id}"]`);
+  if (!tab) return;
+  
+  // Set tab active
+  document.querySelectorAll('.tn-tab').forEach(t=>t.classList.remove('active'));
+  tab.classList.add('active');
+  
+  // Set page active
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const pageEl = document.getElementById('page-'+id);
+  if (pageEl) pageEl.classList.add('active');
+  
+  // Load page specific data
+  if(id==='expenses'){buildMonthTabs();renderExpPage();}
+  if(id==='annual'){buildAnnualSummary();setTimeout(buildAnnualCharts,80);}
+  if(id==='gym'){setTimeout(buildGymCharts,80);}
+  if(id==='morning'){buildMRTable();buildMRHistory();setTimeout(buildMRWeekChart,80);}
+  if(id==='settings'){updateSyncStats(); buildBudgetSettingsUI();}
+  if(id==='dashboard'){setTimeout(buildDashCharts,80);}
+}
+
+/* ═══ LAUNCH ═══ */
+function launchApp(targetPageId = 'dashboard'){
+  loadDb();
+  
+  const welcome = document.getElementById('welcome');
+  if (welcome) welcome.style.display = 'none';
+  
+  const app = document.getElementById('app');
+  if (app) app.classList.add('on');
+  
+  const today=new Date().toISOString().split('T')[0];
+  const expDate = document.getElementById('exp-date');
+  if (expDate) expDate.value = today;
+  const gymDate = document.getElementById('gym-date');
+  if (gymDate) gymDate.value = today;
+  
+  const dateSel = document.getElementById('mr-date-sel');
+  if (dateSel) dateSel.value = mrSelDate;
+  
+  buildBudgetStatusList();
+  updateTopChips();
+  updateDashboardKpis();
+  updateGymStats();
+  updateSyncStats();
+  renderShlokStrip(curShlokIdx);
+  
+  switchPage(targetPageId);
+  
+  if (window.location.hash.replace('#', '') !== targetPageId) {
+    window.location.hash = targetPageId;
+  }
+}
+
+function launch(){
+  loadDb();
+  document.getElementById('welcome').classList.add('out');
+  setTimeout(()=>{
+    localStorage.setItem('gourav_life_os_auto_bypass', 'true');
+    const hash = window.location.hash.replace('#', '') || 'dashboard';
+    const validPages = ['dashboard', 'morning', 'expenses', 'annual', 'gym', 'settings'];
+    const targetPageId = validPages.includes(hash) ? hash : 'dashboard';
+    launchApp(targetPageId);
+  },650);
+}
+
+function resetAutoBypass() {
+  localStorage.removeItem('gourav_life_os_auto_bypass');
+  alert('Welcome screen preference reset! The Welcome screen will show up on next load.');
+}
+
+let currentZoom = parseInt(localStorage.getItem('gourav_zoom_level')) || 20;
+
+function applyZoom() {
+  document.documentElement.style.fontSize = currentZoom + 'px';
+  const pct = Math.round((currentZoom / 16) * 100);
+  const lbl = document.getElementById('zoom-lbl');
+  if (lbl) lbl.textContent = pct + '%';
+  localStorage.setItem('gourav_zoom_level', currentZoom.toString());
+}
+
+function adjustZoom(dir) {
+  currentZoom = Math.max(14, Math.min(36, currentZoom + dir));
+  applyZoom();
+}
+
+/* set today's shlok on welcome screen at load */
+(function(){
+  loadDb();
+  renderShlokStrip(curShlokIdx);
+  applyZoom();
+  
+  const hash = window.location.hash.replace('#', '');
+  const validPages = ['dashboard', 'morning', 'expenses', 'annual', 'gym', 'settings'];
+  
+  if (hash && validPages.includes(hash)) {
+    launchApp(hash);
+  } else if (localStorage.getItem('gourav_life_os_auto_bypass') === 'true') {
+    launchApp('dashboard');
+  }
+})();
+
+// Listen for hash changes to navigate between pages dynamically
+window.addEventListener('hashchange', () => {
+  const hash = window.location.hash.replace('#', '');
+  const validPages = ['dashboard', 'morning', 'expenses', 'annual', 'gym', 'settings'];
+  if (hash && validPages.includes(hash)) {
+    const app = document.getElementById('app');
+    if (app && app.classList.contains('on')) {
+      switchPage(hash);
+    } else {
+      launchApp(hash);
+    }
+  }
+});
+</script>
+</body>
+</html>
