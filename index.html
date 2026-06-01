@@ -195,6 +195,13 @@ body{background:var(--bg);color:var(--t1);font-family:'Inter',sans-serif;font-si
 .daily-tbl tr:hover td{background:rgba(79,142,247,0.03)}
 .daily-tbl tr.tot-row td{background:var(--bg2);color:var(--t1);font-weight:700;border-top:2px solid var(--border2)}
 .daily-tbl tr.avg-row td{background:rgba(79,142,247,0.04);color:var(--blue2)}
+
+/* delete expense button */
+.del-exp-btn{background:none;border:1px solid transparent;border-radius:5px;color:var(--t4);cursor:pointer;font-size:0.72rem;padding:2px 6px;transition:all 0.2s ease;display:inline-flex;align-items:center;justify-content:center}
+.del-exp-btn:hover{color:var(--red2);background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.2);transform:scale(1.15)}
+.del-exp-btn:active{transform:scale(0.95)}
+@keyframes fadeOutRow{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(20px)}}
+.row-removing td{animation:fadeOutRow 0.3s ease forwards}
 .cv{color:var(--t1)}.ce{color:var(--t4)}.cl{color:var(--amber2)}
 
 /* ══ MONTH TABS ══ */
@@ -752,7 +759,7 @@ function doPost(e) {
     metaSheet.appendRow(["Last Synced At", new Date().toISOString()]);
     metaSheet.appendRow(["Total Expense Records", data.expenses ? data.expenses.length : 0]);
     metaSheet.appendRow(["Total Gym Records", data.gym_logs ? data.gym_logs.length : 0]);
-    metaSheet.appendRow(["Total Routine Logs", data.mr_daily_logs ? data.mr_daily_logs.length : 0]);
+    metaSheet.appendRow(["Total Routine Logs", data.mr_daily_logs ? countKeys(data.mr_daily_logs) : 0]);
     
     // 2. Save Expenses
     if (data.expenses) {
@@ -768,9 +775,16 @@ function doPost(e) {
     if (data.gym_logs) {
       var sheet = getOrCreateSheet(ss, "Gym_Logs");
       sheet.clearContents();
-      sheet.appendRow(["Date", "Duration (min)", "Activity", "Weight (kg)", "Notes"]);
+      sheet.appendRow(["Date", "Workout Type", "Duration (min)", "Weight (kg)", "Calories (cal)", "Notes"]);
       data.gym_logs.forEach(function(item) {
-        sheet.appendRow([item.date, item.dur, item.act, item.wt || "", item.notes || ""]);
+        sheet.appendRow([
+          item.date,
+          item.type || "",
+          item.dur || 0,
+          item.wt || "",
+          item.cal || "",
+          item.notes || ""
+        ]);
       });
     }
     
@@ -783,7 +797,13 @@ function doPost(e) {
         var dayLog = data.mr_daily_logs[date];
         for (var act in dayLog) {
           var actLog = dayLog[act];
-          sheet.appendRow([date, act, actLog.target || 0, actLog.done || 0, actLog.target ? Math.round((actLog.done/actLog.target)*100) : 0]);
+          sheet.appendRow([
+            date,
+            act,
+            actLog.target || 0,
+            actLog.done || 0,
+            actLog.target ? Math.round((actLog.done / actLog.target) * 100) : 0
+          ]);
         }
       }
     }
@@ -793,20 +813,129 @@ function doPost(e) {
       var sheet = getOrCreateSheet(ss, "Routine_Targets");
       sheet.clearContents();
       sheet.appendRow(["Activity", "Target (min)"]);
-      for (var act in data.mr_targets) {
-        sheet.appendRow([act, data.mr_targets[act]]);
-      }
+      var actNames = ["Meditation", "Yoga", "Pranayama", "Exercise / Gym", "Geeta Reading", "Study / Learning", "Journaling"];
+      data.mr_targets.forEach(function(target, idx) {
+        var name = actNames[idx] || ("Activity " + idx);
+        sheet.appendRow([name, target]);
+      });
     }
     
     return ContentService.createTextOutput(JSON.stringify({
       status: "success",
-      message: "Sync completed successfully at " + new Date().toISOString()
+      message: "Sync completed successfully at " + new Date().toLocaleString()
     })).setMimeType(ContentService.MimeType.JSON);
-    
-  } catch (error) {
+  } catch (err) {
     return ContentService.createTextOutput(JSON.stringify({
       status: "error",
-      message: error.toString()
+      message: err.toString()
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function doGet(e) {
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var result = { expenses: {}, gym_logs: [], mr_targets: [], mr_daily_logs: {} };
+    
+    function formatDate(d) {
+      if (d instanceof Date) {
+        var yyyy = d.getFullYear();
+        var mm = String(d.getMonth() + 1).padStart(2, '0');
+        var dd = String(d.getDate()).padStart(2, '0');
+        return yyyy + '-' + mm + '-' + dd;
+      }
+      if (typeof d === 'string') {
+        if (d.includes('T')) return d.split('T')[0];
+        return d;
+      }
+      return d;
+    }
+    
+    // Read Expenses sheet
+    var expSheet = ss.getSheetByName("Expenses");
+    if (expSheet &amp;&amp; expSheet.getLastRow() &gt; 1) {
+      var expData = expSheet.getRange(2, 1, expSheet.getLastRow() - 1, 7).getValues();
+      expData.forEach(function(row) {
+        var mk = row[6]; // Month key
+        var dateStr = formatDate(row[1]);
+        if (!result.expenses[mk]) result.expenses[mk] = [];
+        result.expenses[mk].push({
+          id: row[0],
+          date: dateStr,
+          notes: row[2],
+          cat: row[3],
+          amount: Number(row[4]) || 0
+        });
+      });
+    }
+    
+    // Read Gym Logs
+    var gymSheet = ss.getSheetByName("Gym_Logs");
+    if (gymSheet &amp;&amp; gymSheet.getLastRow() &gt; 1) {
+      var gymData = gymSheet.getRange(2, 1, gymSheet.getLastRow() - 1, 6).getValues();
+      gymData.forEach(function(row) {
+        var dateStr = formatDate(row[0]);
+        var type = row[1];
+        var dur = Number(row[2]) || 0;
+        var wt = row[3] !== "" ? Number(row[3]) : "";
+        var cal = row[4] !== "" ? Number(row[4]) : "";
+        var notes = row[5] || "";
+        result.gym_logs.push({ date: dateStr, type: type, dur: dur, wt: wt, cal: cal, notes: notes });
+      });
+    }
+    
+    // Read Morning Routine Logs
+    var routineSheet = ss.getSheetByName("Routine_Daily_Logs");
+    if (routineSheet &amp;&amp; routineSheet.getLastRow() &gt; 1) {
+      var routineData = routineSheet.getRange(2, 1, routineSheet.getLastRow() - 1, 4).getValues();
+      routineData.forEach(function(row) {
+        var dateStr = formatDate(row[0]);
+        var act = row[1];
+        var target = Number(row[2]) || 0;
+        var done = Number(row[3]) || 0;
+        if (dateStr &amp;&amp; act) {
+          if (!result.mr_daily_logs[dateStr]) result.mr_daily_logs[dateStr] = {};
+          result.mr_daily_logs[dateStr][act] = { target: target, done: done };
+        }
+      });
+    }
+    
+    // Read Routine Targets
+    var targetSheet = ss.getSheetByName("Routine_Targets");
+    var actNames = ["Meditation", "Yoga", "Pranayama", "Exercise / Gym", "Geeta Reading", "Study / Learning", "Journaling"];
+    if (targetSheet &amp;&amp; targetSheet.getLastRow() &gt; 1) {
+      var targetData = targetSheet.getRange(2, 1, targetSheet.getLastRow() - 1, 2).getValues();
+      var targetsArray = [];
+      targetData.forEach(function(row) {
+        var name = row[0];
+        var val = Number(row[1]);
+        var idx = actNames.indexOf(name);
+        if (idx !== -1) {
+          targetsArray[idx] = val;
+        }
+      });
+      for (var i = 0; i &lt; actNames.length; i++) {
+        if (targetsArray[i] === undefined) {
+          var defaults = [20, 30, 15, 45, 15, 60, 10];
+          targetsArray[i] = defaults[i];
+        }
+      }
+      result.mr_targets = targetsArray;
+    } else {
+      result.mr_targets = [20, 30, 15, 45, 15, 60, 10];
+    }
+    
+    // JSONP callback support
+    var callback = e.parameter.callback;
+    var output = JSON.stringify(result);
+    if (callback) {
+      return ContentService.createTextOutput(callback + '(' + output + ')').setMimeType(ContentService.MimeType.JAVASCRIPT);
+    }
+    return ContentService.createTextOutput(output).setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({
+      status: "error",
+      message: err.toString()
     })).setMimeType(ContentService.MimeType.JSON);
   }
 }
@@ -818,41 +947,60 @@ function getOrCreateSheet(ss, name) {
   }
   return sheet;
 }
-        </pre>
-        <div style="font-size:0.6rem; color:var(--t3); text-align:right; margin-top:2px">Click the code block to copy to clipboard</div>
+
+function countKeys(obj) {
+  var count = 0;
+  for (var k in obj) {
+    if (obj.hasOwnProperty(k)) count++;
+  }
+  return count;
+}</pre>
+
       </div>
     </div>
   </div>
-
 </div>
 
 <script>
 /* ════════════════════════════════════════════
-   SHLOK DATA — Chapter sequence, no repeats
-   Starts BG 1.1 and continues in order
+   SHLOK DATA & FUNCTIONS
 ════════════════════════════════════════════ */
-const SHLOKS=[
-  {ch:1,v:1,skt:'धृतराष्ट्र उवाच\nधर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः।\nमामकाः पाण्डवाश्चैव किमकुर्वत सञ्जय॥',eng:'Dhritarashtra said: O Sanjaya, after my sons and the sons of Pandu assembled in the place of pilgrimage at Kurukshetra, desiring to fight, what did they do?',theme:'Setting the Stage'},
-  {ch:1,v:47,skt:'सञ्जय उवाच\nएवमुक्त्वार्जुनः सङ्ख्ये रथोपस्थ उपाविशत्।\nविसृज्य सशरं चापं शोकसंविग्नमानसः॥',eng:'Sanjaya said: Having spoken thus on the battlefield, Arjuna laid aside his bow and arrows and sat down on the chariot, his mind overwhelmed with grief.',theme:'Arjuna\'s Grief'},
-  {ch:2,v:3,skt:'क्लैब्यं मा स्म गमः पार्थ नैतत्त्वय्युपपद्यते।\nक्षुद्रं हृदयदौर्बल्यं त्यक्त्वोत्तिष्ठ परन्तप॥',eng:'Do not yield to impotence, O Arjuna. It does not befit you. Shake off your faint-heartedness and arise, O scorcher of enemies!',theme:'Courage'},
-  {ch:2,v:14,skt:'मात्रास्पर्शास्तु कौन्तेय शीतोष्णसुखदुःखदाः।\nआगमापायिनोऽनित्यास्तांस्तितिक्षस्व भारत॥',eng:'O son of Kunti, the contacts between the senses and the sense objects give rise to cold and heat, pleasure and pain. They come and go and are impermanent. Bear them patiently, O Arjuna.',theme:'Equanimity'},
-  {ch:2,v:19,skt:'य एनं वेत्ति हन्तारं यश्चैनं मन्यते हतम्।\nउभौ तौ न विजानीतो नायं हन्ति न हन्यते॥',eng:'One who thinks that this soul is a slayer and one who thinks that this soul is slain — both of them are in ignorance. The soul neither slays nor is slain.',theme:'Soul is Eternal'},
-  {ch:2,v:20,skt:'न जायते म्रियते वा कदाचित्\nनायं भूत्वा भविता वा न भूयः।\nअजो नित्यः शाश्वतोऽयं पुराणो\nन हन्यते हन्यमाने शरीरे॥',eng:'The soul is never born nor dies at any time. It has not come into being, does not come into being, and will not come into being. It is unborn, eternal, ever-existing and primeval.',theme:'Immortality of Soul'},
-  {ch:2,v:47,skt:'कर्मण्येवाधिकारस्ते मा फलेषु कदाचन।\nमा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि॥',eng:'You have the right to perform your duties, but never to the fruits of action. Never consider yourself the cause of the results, and never be attached to inaction.',theme:'Nishkama Karma'},
-  {ch:2,v:62,skt:'ध्यायतो विषयान्पुंसः सङ्गस्तेषूपजायते।\nसङ्गात्संजायते कामः कामात्क्रोधोऽभिजायते॥',eng:'While contemplating the objects of the senses, a person develops attachment for them. From attachment, desire is born; from desire, anger arises.',theme:'Chain of Downfall'},
-  {ch:3,v:21,skt:'यद्यदाचरति श्रेष्ठस्तत्तदेवेतरो जनः।\nस यत्प्रमाणं कुरुते लोकस्तदनुवर्तते॥',eng:'Whatever a great person does, others follow. Whatever standards he sets, the world follows.',theme:'Leadership by Example'},
-  {ch:3,v:27,skt:'प्रकृतेः क्रियमाणानि गुणैः कर्माणि सर्वशः।\nअहङ्कारविमूढात्मा कर्ताहमिति मन्यते॥',eng:'All actions are performed by the qualities of material nature. But one who is deluded by the false ego thinks: "I am the doer."',theme:'Ego & Doership'},
-  {ch:4,v:7,skt:'यदा यदा हि धर्मस्य ग्लानिर्भवति भारत।\nअभ्युत्थानमधर्मस्य तदात्मानं सृजाम्यहम्॥',eng:'Whenever and wherever there is a decline in righteousness and a predominant rise of unrighteousness, at that time I manifest Myself.',theme:'Divine Manifestation'},
-  {ch:4,v:8,skt:'परित्राणाय साधूनां विनाशाय च दुष्कृताम्।\nधर्मसंस्थापनार्थाय सम्भवामि युगे युगे॥',eng:'To deliver the pious and to annihilate the miscreants, as well as to re-establish the principles of righteousness, I appear millennium after millennium.',theme:'Purpose of Avatars'},
-  {ch:5,v:10,skt:'ब्रह्मण्याधाय कर्माणि सङ्गं त्यक्त्वा करोति यः।\nलिप्यते न स पापेन पद्मपत्रमिवाम्भसा॥',eng:'One who performs his duty without attachment, surrendering results to the Supreme, is unaffected by sinful action, as the lotus leaf is untouched by water.',theme:'Renunciation in Action'},
-  {ch:6,v:5,skt:'उद्धरेदात्मनात्मानं नात्मानमवसादयेत्।\nआत्मैव ह्यात्मनो बन्धुरात्मैव रिपुरात्मनः॥',eng:'A person must elevate himself by his own mind, not degrade himself. The mind is the friend of the conditioned soul, and his enemy as well.',theme:'Self-Elevation'},
-  {ch:6,v:6,skt:'बन्धुरात्मात्मनस्तस्य येनात्मैवात्मना जितः।\nअनात्मनस्तु शत्रुत्वे वर्तेतात्मैव शत्रुवत्॥',eng:'For one who has conquered the mind, the mind is the best of friends. But for one who has failed to do so, the mind remains the greatest enemy.',theme:'Mind as Friend or Enemy'},
-  {ch:9,v:22,skt:'अनन्याश्चिन्तयन्तो मां ये जनाः पर्युपासते।\nतेषां नित्याभियुक्तानां योगक्षेमं वहाम्यहम्॥',eng:'For those who worship Me with devotion, meditating on My transcendental form, I carry what they lack and preserve what they have.',theme:'Divine Providence'},
-  {ch:12,v:13,skt:'अद्वेष्टा सर्वभूतानां मैत्रः करुण एव च।\nनिर्ममो निरहङ्कारः समदुःखसुखः क्षमी॥',eng:'One who is not envious but is a kind friend to all living entities, who does not think himself a proprietor, who is free from ego and equal in happiness and distress, and who is tolerant.',theme:'Qualities of a Devotee'},
-  {ch:18,v:63,skt:'इति ते ज्ञानमाख्यातं गुह्याद्गुह्यतरं मया।\nविमृश्यैतदशेषेण यथेच्छसि तथा कुरु॥',eng:'Thus, I have explained to you the most confidential of all knowledge. Deliberate on this fully and then do what you wish to do.',theme:'Free Will'},
-  {ch:18,v:66,skt:'सर्वधर्मान्परित्यज्य मामेकं शरणं व्रज।\nअहं त्वां सर्वपापेभ्यो मोक्षयिष्यामि मा शुचः॥',eng:'Abandon all varieties of religion and just surrender unto Me. I shall deliver you from all sinful reactions. Do not fear.',theme:'Total Surrender'},
-  {ch:18,v:78,skt:'यत्र योगेश्वरः कृष्णो यत्र पार्थो धनुर्धरः।\nतत्र श्रीर्विजयो भूतिर्ध्रुवा नीतिर्मतिर्मम॥',eng:'Wherever there is Krishna, the master of all mystics, and wherever there is Arjuna, the supreme archer, there will also certainly be opulence, victory, extraordinary power, and morality.',theme:'Final Victory'},
+const DEFAULT_SHLOKS = [
+  {ch:1,v:1,skt:'धृतराष्ट्र उवाच\nधर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः।\nमामकाः पाण्डवाश्चैव किमकुर्वत सञ्जय॥',eng:'Dhritarashtra said: O Sanjaya, after my sons and the sons of Pandu assembled in the place of pilgrimage at Kurukshetra, desiring to fight, what did they do?',hin:'धृतराष्ट्र ने कहा: हे संजय! धर्मभूमि कुरुक्षेत्र में युद्ध की इच्छा से एकत्र हुए मेरे और पाण्डु के पुत्रों ने क्या किया?',theme:'Setting the Stage'},
+  {ch:1,v:47,skt:'सञ्जय उवाच\nएवमुक्त्वार्जुनः सङ्ख्ये रथोपस्थ उपाविशत्।\nविसृज्य सशरं चापं शोकसंविग्नमानसः॥',eng:'Sanjaya said: Having spoken thus on the battlefield, Arjuna laid aside his bow and arrows and sat down on the chariot, his mind overwhelmed with grief.',hin:'संजय ने कहा: युद्धभूमि में ऐसा कहकर, शोक से व्याकुल मन वाले अर्जुन ने अपने धनुष और बाणों को त्याग दिया और रथ के पिछले भाग में बैठ गए।',theme:'Arjuna\'s Grief'},
+  {ch:2,v:3,skt:'क्लैब्यं मा स्म गमः पार्थ नैतत्त्वय्युपपद्यते।\nक्षुद्रं हृदयदौर्बल्यं त्यक्त्वोत्तिष्ठ परन्तप॥',eng:'Do not yield to impotence, O Arjuna. It does not befit you. Shake off your faint-heartedness and arise, O scorcher of enemies!',hin:'हे पार्थ! नपुंसकता को मत प्राप्त हो, यह तुम्हारे योग्य नहीं है। हे शत्रुओं के दमन करने वाले! हृदय की इस तुच्छ कमजोरी को त्यागकर युद्ध के लिए खड़े हो जाओ।',theme:'Courage'},
+  {ch:2,v:14,skt:'मात्रास्पर्शास्तु कौन्तेय शीतोष्णसुखदुःखदाः।\nआगमापायिनोऽनित्यास्तांस्तितिक्षस्व भारत॥',eng:'O son of Kunti, the contacts between the senses and the sense objects give rise to cold and heat, pleasure and pain. They come and go and are impermanent. Bear them patiently, O Arjuna.',hin:'हे कुन्तीपुत्र! इन्द्रियों और विषयों का संयोग ही सर्दी-गर्मी तथा सुख-दुःख को देने वाला है। ये आने-जाने वाले और अनित्य हैं, इसलिए हे भारत! तुम इन्हें सहन करना सीखो।',theme:'Equanimity'},
+  {ch:2,v:19,skt:'य एनं वेत्ति हन्तारं यश्चैनं मन्यते हतम्।\nउभौ तौ न विजानीतो नायं हन्ति न हन्यते॥',eng:'One who thinks that this soul is a slayer and one who thinks that this soul is slain — both of them are in ignorance. The soul neither slays nor is slain.',hin:'जो व्यक्ति इस आत्मा को मारने वाला समझता है और जो इसे मरा हुआ मानता है, वे दोनों ही अज्ञानी हैं। यह आत्मा न तो किसी को मारती है और न ही किसी के द्वारा मारी जा सकती है।',theme:'Soul is Eternal'},
+  {ch:2,v:20,skt:'न जायते म्रियते वा कदाचित्\nनायं भूत्वा भविता वा न भूयः।\nअजो नित्यः शाश्वतोऽयं पुराणो\nन हन्यते हन्यमाने शरीरे॥',eng:'The soul is never born nor dies at any time. It has not come into being, does not come into being, and will not come into being. It is unborn, eternal, ever-existing and primeval.',hin:'आत्मा किसी भी काल में न तो जन्म लेती है और न ही मरती है, और न ही यह बार-बार उत्पन्न होती है। यह अजन्मा, नित्य, सनातन और पुरातन है। शरीर के मारे जाने पर भी यह नहीं मारी जाती।',theme:'Immortality of Soul'},
+  {ch:2,v:47,skt:'कर्मण्येवाधिकारस्ते मा फलेषु कदाचन।\nमा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि॥',eng:'You have the right to perform your duties, but never to the fruits of action. Never consider yourself the cause of the results, and never be attached to inaction.',hin:'तुम्हारा अधिकार केवल कर्म करने पर है, उसके फलों पर कभी नहीं। तुम स्वयं को कर्मों के फलों का कारण मत मानो और न ही तुम्हारी अकर्मण्यता (कर्म न करने) में आसक्ति हो।',theme:'Nishkama Karma'},
+  {ch:2,v:62,skt:'ध्यायतो विषयान्पुंसः सङ्गस्तेषूपजायते।\nसङ्गात्संजायते कामः कामात्क्रोधोऽभिजायते॥',eng:'While contemplating the objects of the senses, a person develops attachment for them. From attachment, desire is born; from desire, anger arises.',hin:'विषयों का चिन्तन करने वाले मनुष्य की उन विषयों में आसक्ति हो जाती है। आसक्ति से इच्छा (कामना) उत्पन्न होती है और कामना में बाधा आने से क्रोध उत्पन्न होता है।',theme:'Chain of Downfall'},
+  {ch:3,v:21,skt:'यद्यदाचरति श्रेष्ठस्तत्तदेवेतरो जनः।\nस यत्प्रमाणं कुरुते लोकस्तदनुवर्तते॥',eng:'Whatever a great person does, others follow. Whatever standards he sets, the world follows.',hin:'श्रेष्ठ पुरुष जैसा आचरण करते हैं, सामान्य लोग भी वैसा ही करते हैं। वह जो कुछ भी आदर्श प्रस्तुत करता है, समस्त संसार उसका अनुसरण करता है।',theme:'Leadership by Example'},
+  {ch:3,v:27,skt:'प्रकृतेः क्रियमाणानि गुणैः कर्माणि सर्वशः।\nअहङ्कारविमूढात्मा कर्ताहमिति मन्यते॥',eng:'All actions are performed by the qualities of material nature. But one who is deluded by the false ego thinks: "I am the doer."',hin:'सारे कर्म प्रकृति के गुणों द्वारा किए जाते हैं, परन्तु अहंकार से मोहित बुद्धि वाला अज्ञानी मनुष्य मानता है कि "मैं कर्ता हूँ"।',theme:'Ego & Doership'},
+  {ch:4,v:7,skt:'यदा यदा हि धर्मस्य ग्लानिर्भवति भारत।\nअभ्युत्थानमधर्मस्य तदात्मानं सृजाम्यहम्॥',eng:'Whenever and wherever there is a decline in righteousness and a predominant rise of unrighteousness, at that time I manifest Myself.',hin:'हे भारत! जब-जब धर्म की हानि और अधर्म का अभ्युत्थान होता है, तब-तब मैं अपने साकार रूप में प्रकट होता हूँ।',theme:'Divine Manifestation'},
+  {ch:4,v:8,skt:'परित्राणाय साधूनां विनाशाय च दुष्कृताम्।\nधर्मसंस्थापनार्थाय सम्भवामि युगे युगे॥',eng:'To deliver the pious and to annihilate the miscreants, as well as to re-establish the principles of righteousness, I appear millennium after millennium.',hin:'सज्जनों के कल्याण और दुष्टों के विनाश तथा धर्म की स्थापना के लिए मैं युग-युग में प्रकट होता हूँ।',theme:'Purpose of Avatars'},
+  {ch:5,v:10,skt:'ब्रह्मण्याधाय कर्माणि सङ्गं त्यक्त्वा करोति यः।\nलिप्यते न स पापेन पद्मपत्रमिवाम्भसा॥',eng:'One who performs his duty without attachment, surrendering results to the Supreme, is unaffected by sinful action, as the lotus leaf is untouched by water.',hin:'जो पुरुष अपने सभी कर्मों को भगवान को समर्पित करके, आसक्ति रहित होकर कर्म करता है, वह पाप से वैसे ही अछूता रहता है जैसे कमल का पत्ता जल से।',theme:'Renunciation in Action'},
+  {ch:6,v:5,skt:'उद्धरेदात्मनात्मानं नात्मानमवसादयेत्।\nआत्मैव ह्यात्मनो बन्धुरात्मैव रिपुरात्मनः॥',eng:'A person must elevate himself by his own mind, not degrade himself. The mind is the friend of the conditioned soul, and his enemy as well.',hin:'मनुष्य को अपने मन के द्वारा स्वयं का उद्धार करना चाहिए, अपना पतन नहीं होने देना चाहिए। क्योंकि यह मन ही जीवात्मा का मित्र है और मन ही उसका शत्रु भी है।',theme:'Self-Elevation'},
+  {ch:6,v:6,skt:'बन्धुरात्मात्मनस्तस्य येनात्मैवात्मना जितः।\nअनात्मनस्तु शत्रुत्वे वर्तेतात्मैव शत्रुवत्॥',eng:'For one who has conquered the mind, the mind is the best of friends. But for one who has failed to do so, the mind remains the greatest enemy.',hin:'जो व्यक्ति अपने मन पर विजय प्राप्त कर ली है, उसके लिए मन सबसे अच्छा मित्र है। लेकिन जो ऐसा करने में असफल रहा है, उसके लिए मन परम शत्रु के समान कार्य करता है।',theme:'Mind as Friend or Enemy'},
+  {ch:9,v:22,skt:'अनन्याश्चिन्तयन्तो मां ये जनाः पर्युपासते।\nतेषां नित्याभियुक्तानां योगक्षेमं वहाम्यहम्॥',eng:'For those who worship Me with devotion, meditating on My transcendental form, I carry what they lack and preserve what they have.',hin:'जो अनन्य भक्त मेरा चिन्तन करते हुए मेरी उपासना करते हैं, उन नित्य युक्त पुरुषों की आवश्यकताओं को मैं पूर्ण करता हूँ और जो उनके पास है उसकी रक्षा करता हूँ (योग-क्षेम वहन करता हूँ)।',theme:'Divine Providence'},
+  {ch:12,v:13,skt:'अद्वेष्टा सर्वभूतानां मैत्रः करुण एव च।\nनिर्ममो निरहङ्कारः समदुःखसुखः क्षमी॥',eng:'One who is not envious but is a kind friend to all living entities, who does not think himself a proprietor, who is free from ego and equal in happiness and distress, and who is tolerant.',hin:'जो किसी भी जीव से द्वेष नहीं रखता, सभी का मित्र है, दयालु है, ममता और अहंकार से रहित है, सुख-दुःख में समान रहता है और क्षमाशील है, वह मुझे प्रिय है।',theme:'Qualities of a Devotee'},
+  {ch:18,v:63,skt:'इति ते ज्ञानमाख्यातं गुह्याद्गुह्यतरं मया।\nविमृश्यैतदशेषेण यथेच्छसि तथा कुरु॥',eng:'Thus, I have explained to you the most confidential of all knowledge. Deliberate on this fully and then do what you wish to do.',hin:'इस प्रकार मैंने तुम्हें गोपनीय से भी अति गोपनीय ज्ञान बता दिया है। इस पर पूर्ण रूप से विचार करो, और फिर तुम जैसा करना चाहो वैसा करो।',theme:'Free Will'},
+  {ch:18,v:66,skt:'सर्वधर्मान्परित्यज्य मामेकं शरणं व्रज।\nअहं त्वां सर्वपापेभ्यो मोक्षयिष्यामि मा शुचः॥',eng:'Abandon all varieties of religion and just surrender unto Me. I shall deliver you from all sinful reactions. Do not fear.',hin:'सभी धर्मों (कर्तव्यों) को मुझमें समर्पित करके तुम केवल मेरी शरण में आ जाओ। मैं तुम्हें सभी पापों से मुक्त कर दूँगा, तुम शोक मत करो।',theme:'Total Surrender'},
+  {ch:18,v:78,skt:'यत्र योगेश्वरः कृष्णो यत्र पार्थो धनुर्धरः।\nतत्र श्रीर्विजयो भूतिर्ध्रुवा नीतिर्मतिर्मम॥',eng:'Wherever there is Krishna, the master of all mystics, and wherever there is Arjuna, the supreme archer, there will also certainly be opulence, victory, extraordinary power, and morality.',hin:'जहाँ योगेश्वर श्रीकृष्ण हैं और जहाँ गाण्डीवधारी धनुर्धर अर्जुन हैं, वहाँ ऐश्वर्य, विजय, विभूति (अलौकिक शक्ति) और अचल नीति अवश्य होगी, ऐसा मेरा मत है।',theme:'Final Victory'}
 ];
+let SHLOKS = [...DEFAULT_SHLOKS];
+
+function loadShloksFromStorage() {
+  const saved = localStorage.getItem('gourav_custom_shloks');
+  if (saved) {
+    try {
+      SHLOKS = JSON.parse(saved);
+      return;
+    } catch (e) {
+      console.error("Error loading custom shloks:", e);
+    }
+  }
+  SHLOKS = DEFAULT_SHLOKS;
+}
 
 /* Day index from April 1, 2026 (FY start) */
 function getDayIndex(){
@@ -1238,6 +1386,43 @@ function addExpense(){
   updateTopChips();
   updateDashboardKpis();
   updateGymStats();
+  // Auto-sync to Google Sheet after adding
+  if (syncSettings.url) { syncNow(); }
+}
+
+function deleteExpense(monthKey, expId) {
+  if (!confirm('Delete this expense entry?')) return;
+  const arr = userExp[monthKey];
+  if (!arr) return;
+  const idx = arr.findIndex(e => e.id === expId);
+  if (idx === -1) return;
+  // Animate removal
+  const row = document.getElementById('exp-row-' + expId);
+  if (row) {
+    row.classList.add('row-removing');
+    setTimeout(() => {
+      arr.splice(idx, 1);
+      if (arr.length === 0) delete userExp[monthKey];
+      saveDb();
+      buildMonthTabs();
+      renderExpPage();
+      updateTopChips();
+      updateDashboardKpis();
+      updateSyncStats();
+      // Auto-sync deletion to Google Sheet
+      if (syncSettings.url) { syncNow(); }
+    }, 300);
+  } else {
+    arr.splice(idx, 1);
+    if (arr.length === 0) delete userExp[monthKey];
+    saveDb();
+    buildMonthTabs();
+    renderExpPage();
+    updateTopChips();
+    updateDashboardKpis();
+    updateSyncStats();
+    if (syncSettings.url) { syncNow(); }
+  }
 }
 function getMonthKeyFromDate(d){
   const dt=new Date(d);
@@ -1473,23 +1658,24 @@ const DB_KEYS = {
   monthly_budgets: 'gourav_monthly_budgets'
 };
 
+
 function loadDb() {
   try {
     const savedExp = localStorage.getItem(DB_KEYS.expenses);
     userExp = savedExp ? JSON.parse(savedExp) : {};
-    
+
     const savedGym = localStorage.getItem(DB_KEYS.gym_logs);
     gymLogs = savedGym ? JSON.parse(savedGym) : [];
-    
+
     const savedTargets = localStorage.getItem(DB_KEYS.mr_targets);
-    mrTargets = savedTargets ? JSON.parse(savedTargets) : MR.map(r=>r.defaultTarget);
-    
+    mrTargets = savedTargets ? JSON.parse(savedTargets) : MR.map(r => r.defaultTarget);
+
     const savedDailyLogs = localStorage.getItem(DB_KEYS.mr_daily_logs);
     mrDailyLogs = savedDailyLogs ? JSON.parse(savedDailyLogs) : getSeedMRLogs();
-    
+
     const savedShlokIdx = localStorage.getItem(DB_KEYS.shlok_idx);
     if (savedShlokIdx !== null) curShlokIdx = parseInt(savedShlokIdx);
-    
+
     const savedSync = localStorage.getItem(DB_KEYS.sync_settings);
     syncSettings = savedSync ? JSON.parse(savedSync) : { url: '', lastSync: null };
 
@@ -1497,7 +1683,7 @@ function loadDb() {
     if (savedCatBudgets) {
       CAT_BUDGETS = JSON.parse(savedCatBudgets);
     }
-    
+
     const savedMonthlyBudgets = localStorage.getItem(DB_KEYS.monthly_budgets);
     if (savedMonthlyBudgets) {
       const parsed = JSON.parse(savedMonthlyBudgets);
@@ -1511,11 +1697,100 @@ function loadDb() {
     console.error('Failed to load database from localStorage, resetting to defaults.', err);
     userExp = {};
     gymLogs = [];
-    mrTargets = MR.map(r=>r.defaultTarget);
+    mrTargets = MR.map(r => r.defaultTarget);
     mrDailyLogs = getSeedMRLogs();
     syncSettings = { url: '', lastSync: null };
   }
+  // Attempt to pull latest data from Google Sheet if URL is configured
+  if (syncSettings.url) {
+    fetchRemoteData();
+  }
 }
+
+// Pull data from the Google Apps Script endpoint (GET request)
+// Uses a dynamic script tag approach to bypass CORS issues with GAS redirects
+async function fetchRemoteData() {
+  try {
+    console.info('[Sync] Fetching remote data from Google Sheet...');
+    const url = syncSettings.url.trim();
+    
+    // Method 1: Try direct fetch first
+    try {
+      const response = await fetch(url, { redirect: 'follow' });
+      const text = await response.text();
+      // Guard against HTML error pages from Google
+      if (text.trim().startsWith('<!DOCTYPE') || text.trim().startsWith('<html')) {
+        console.warn('[Sync] Direct fetch returned HTML. Trying callback approach...');
+        await fetchRemoteViaCallback(url);
+        return;
+      }
+      const data = JSON.parse(text);
+      applyRemoteData(data);
+      return;
+    } catch (fetchErr) {
+      console.warn('[Sync] Direct fetch failed:', fetchErr.message, '. Trying callback approach...');
+    }
+    
+    // Method 2: Fallback — use JSONP-like script tag approach
+    await fetchRemoteViaCallback(url);
+  } catch (e) {
+    console.error('[Sync] Error fetching remote data:', e);
+  }
+}
+
+// JSONP-like callback approach for Google Apps Script
+function fetchRemoteViaCallback(url) {
+  return new Promise((resolve) => {
+    const callbackName = '_gasCallback_' + Date.now();
+    const separator = url.includes('?') ? '&' : '?';
+    const scriptUrl = url + separator + 'callback=' + callbackName;
+    
+    window[callbackName] = function(data) {
+      applyRemoteData(data);
+      delete window[callbackName];
+      document.head.removeChild(script);
+      resolve();
+    };
+    
+    const script = document.createElement('script');
+    script.src = scriptUrl;
+    script.onerror = function() {
+      console.warn('[Sync] JSONP callback approach also failed.');
+      delete window[callbackName];
+      document.head.removeChild(script);
+      resolve();
+    };
+    
+    // Timeout after 15 seconds
+    setTimeout(() => {
+      if (window[callbackName]) {
+        console.warn('[Sync] JSONP callback timed out.');
+        delete window[callbackName];
+        try { document.head.removeChild(script); } catch(_) {}
+        resolve();
+      }
+    }, 15000);
+    
+    document.head.appendChild(script);
+  });
+}
+
+function applyRemoteData(data) {
+  if (!data) return;
+  // Expected structure: { expenses: { 'Apr 2026': [...], ... }, gym_logs: [...] }
+  if (data.expenses && typeof data.expenses === 'object' && !Array.isArray(data.expenses)) {
+    userExp = data.expenses;
+  }
+  if (Array.isArray(data.gym_logs) && data.gym_logs.length > 0) gymLogs = data.gym_logs;
+  if (Array.isArray(data.mr_targets) && data.mr_targets.length > 0) mrTargets = data.mr_targets;
+  if (data.mr_daily_logs && typeof data.mr_daily_logs === 'object') mrDailyLogs = data.mr_daily_logs;
+  syncSettings.lastSync = new Date().toISOString();
+  saveDb();
+  console.info('[Sync] Remote data pulled successfully and local storage updated.');
+  try { updateSyncStats(); updateTopChips(); updateDashboardKpis(); } catch(_) {}
+}
+
+/* removed duplicate launchApp and orphaned code block — canonical version is at bottom */
 
 function saveDb() {
   try {
@@ -1688,11 +1963,18 @@ async function syncNow() {
   const logBox = document.getElementById('sync-log-box');
   const btn = document.getElementById('btn-sync-now');
   if (!syncSettings.url) {
-    alert('Please configure your Google Apps Script Web App URL first.');
+    alert('Please configure your Google Apps Script Web App URL first in Settings.');
     return;
   }
   
-  if (logBox) logBox.textContent = 'Starting sync...\n';
+  // Ensure URL is the deployed Web App URL (exec URL), not the editor URL
+  const scriptUrl = syncSettings.url.trim();
+  if (!scriptUrl.includes('/exec')) {
+    if (logBox) logBox.textContent = '⚠️ ERROR: Your URL does not look like a deployed Web App URL.\nIt should end with "/exec".\nGo to Apps Script > Deploy > Web App and copy the Web App URL.\n';
+    return;
+  }
+  
+  if (logBox) logBox.textContent = '🔄 Starting sync...\n';
   if (btn) btn.disabled = true;
   
   const flatExpenses = [];
@@ -1717,33 +1999,51 @@ async function syncNow() {
     mr_daily_logs: mrDailyLogs
   };
   
-  if (logBox) logBox.textContent += 'Payload compiled. Sending POST request...\n';
+  if (logBox) logBox.textContent += '📦 Payload compiled (' + flatExpenses.length + ' expenses). Sending POST...\n';
   
   try {
-    const response = await fetch(syncSettings.url, {
+    // Send standard POST request with Content-Type text/plain;charset=utf-8
+    // This is a CORS-safelisted simple request to avoid pre-flight OPTIONS check.
+    const response = await fetch(scriptUrl, {
       method: 'POST',
+      redirect: 'follow',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify(payload)
     });
     
-    if (logBox) logBox.textContent += 'Response received. Status: ' + response.status + '\n';
+    const text = await response.text();
     
-    const result = await response.json();
+    // Check if the response contains HTML (e.g. Google login/authorization/error page)
+    if (text.trim().startsWith('<!DOCTYPE') || text.trim().startsWith('<html')) {
+      if (logBox) {
+        logBox.textContent += '⚠️ ERROR: The script returned HTML instead of JSON.\n' +
+                              'This usually means:\n' +
+                              '1. The Google Apps Script is not deployed to "Anyone".\n' +
+                              '2. You have pasted the wrong URL (e.g. Spreadsheet URL instead of Web App URL).\n' +
+                              'Please re-deploy your Web App, set "Who has access" to "Anyone", authorize it, and update the URL.\n';
+      }
+      return;
+    }
+    
+    const result = JSON.parse(text);
     if (result.status === 'success') {
-      if (logBox) logBox.textContent += 'Success: ' + result.message + '\n';
+      if (logBox) logBox.textContent += '✅ ' + result.message + '\n';
       syncSettings.lastSync = new Date().toISOString();
       saveDb();
     } else {
-      if (logBox) logBox.textContent += 'Error from server: ' + (result.message || 'Unknown error') + '\n';
+      if (logBox) {
+        logBox.textContent += '❌ Script error: ' + (result.message || 'Unknown script error') + '\n';
+      }
     }
   } catch (err) {
-    console.error('Fetch error: ', err);
+    console.error('[Sync] Fetch error: ', err);
     if (logBox) {
-      logBox.textContent += 'Sync completed/sent! Note: GScript redirects can sometimes log a network error even when processed successfully.\n';
-      logBox.textContent += 'Error details: ' + err.toString() + '\n';
+      logBox.textContent += '⚠️ Network/CORS error: ' + err.message + '\n' +
+                            'Please verify that:\n' +
+                            '1. Your URL is correct and active.\n' +
+                            '2. The Web App is deployed under "Execute as: Me" and "Who has access: Anyone".\n' +
+                            '3. You granted authorization permissions during the deployment popup.\n';
     }
-    // Apps script usually succeeds on doPost even if CORS throws redirect error, so let's update lastSync to keep user informed.
-    syncSettings.lastSync = new Date().toISOString();
-    saveDb();
   } finally {
     if (btn) btn.disabled = false;
     updateSyncStats();
