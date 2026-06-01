@@ -475,7 +475,7 @@ select.inp option{background:var(--panel)}
             </table>
           </div>
           <div class="mr-summary-row">
-            <div class="mrs-item"><div class="mrs-val" id="mrs-tasks" style="color:var(--blue2)">0/7</div><div class="mrs-lbl">Tasks Met</div></div>
+            <div class="mrs-item"><div class="mrs-val" id="mrs-tasks" style="color:var(--blue2)">0/6</div><div class="mrs-lbl">Tasks Met</div></div>
             <div class="mrs-item"><div class="mrs-val" id="mrs-mins" style="color:var(--amber2)">0</div><div class="mrs-lbl">Mins Done</div></div>
             <div class="mrs-item"><div class="mrs-val" id="mrs-score" style="color:var(--green2)">0%</div><div class="mrs-lbl">Score</div></div>
             <div class="mrs-item"><div class="mrs-val" id="mrs-streak" style="color:var(--saffron)">—</div><div class="mrs-lbl">Streak</div></div>
@@ -607,7 +607,7 @@ select.inp option{background:var(--panel)}
             <div class="wt-btn" onclick="selWT(this,'W')"><span class="wt-icon">🏋️</span>Weights</div>
             <div class="wt-btn" onclick="selWT(this,'C')"><span class="wt-icon">🏃</span>Cardio</div>
             <div class="wt-btn" onclick="selWT(this,'H')"><span class="wt-icon">⚡</span>HIIT</div>
-            <div class="wt-btn active" onclick="selWT(this,'Y')"><span class="wt-icon">🧘</span>Yoga</div>
+            <div class="wt-btn active" onclick="selWT(this,'Y')"><span class="wt-icon">🧘</span>Yoga & Meditation</div>
             <div class="wt-btn" onclick="selWT(this,'P')"><span class="wt-icon">🌬️</span>Pranayama</div>
             <div class="wt-btn" onclick="selWT(this,'R')"><span class="wt-icon">😴</span>Rest Day</div>
             <div class="wt-btn" onclick="selWT(this,'O')"><span class="wt-icon">🤸</span>Other</div>
@@ -882,7 +882,7 @@ function doPost(e) {
       var sheet = getOrCreateSheet(ss, "Routine_Targets");
       sheet.clearContents();
       sheet.appendRow(["Activity", "Target (min)"]);
-      var actNames = ["Meditation", "Yoga", "Pranayama", "Exercise / Gym", "Geeta Reading", "Study / Learning", "Journaling"];
+      var actNames = ["Yoga & Meditation", "Pranayama", "Exercise / Gym", "Geeta Reading", "Study / Learning", "Journaling"];
       data.mr_targets.forEach(function(target, idx) {
         var name = actNames[idx] || ("Activity " + idx);
         sheet.appendRow([name, target]);
@@ -971,7 +971,7 @@ function doGet(e) {
     
     // Read Routine Targets
     var targetSheet = ss.getSheetByName("Routine_Targets");
-    var actNames = ["Meditation", "Yoga", "Pranayama", "Exercise / Gym", "Geeta Reading", "Study / Learning", "Journaling"];
+    var actNames = ["Yoga & Meditation", "Pranayama", "Exercise / Gym", "Geeta Reading", "Study / Learning", "Journaling"];
     if (targetSheet &amp;&amp; targetSheet.getLastRow() &gt; 1) {
       var targetData = targetSheet.getRange(2, 1, targetSheet.getLastRow() - 1, 2).getValues();
       var targetsArray = [];
@@ -1164,8 +1164,7 @@ function buildShlokLibrary(){
    MORNING ROUTINE — targets + actuals
 ════════════════════════════════════════════ */
 const MR=[
-  {name:'Meditation',icon:'🧘',defaultTarget:20,unit:'min',color:'#a78bfa'},
-  {name:'Yoga',icon:'🤸',defaultTarget:30,unit:'min',color:'#22d3ee'},
+  {name:'Yoga & Meditation',icon:'🧘',defaultTarget:50,unit:'min',color:'#a78bfa'},
   {name:'Pranayama',icon:'🌬️',defaultTarget:15,unit:'min',color:'#34d399'},
   {name:'Exercise / Gym',icon:'💪',defaultTarget:45,unit:'min',color:'#10b981'},
   {name:'Geeta Reading',icon:'📖',defaultTarget:15,unit:'min',color:'#ff9933'},
@@ -1800,7 +1799,7 @@ function updateGymStats(){
   const spendEl = document.getElementById('gym-stat-spend');
   if (spendEl) spendEl.textContent = '₹' + gymSpend.toLocaleString('en-IN');
 }
-const typeLabel={W:'🏋️ Weights',C:'🏃 Cardio',H:'⚡ HIIT',Y:'🧘 Yoga',P:'🌬️ Pranayama',R:'😴 Rest',O:'🤸 Other'};
+const typeLabel={W:'🏋️ Weights',C:'🏃 Cardio',H:'⚡ HIIT',Y:'🧘 Yoga & Meditation',P:'🌬️ Pranayama',R:'😴 Rest',O:'🤸 Other'};
 function renderGymLog(){
   const el=document.getElementById('gym-log-list');if(!gymLogs.length){el.textContent='No workouts logged yet.';return;}
   el.innerHTML=gymLogs.slice(-5).reverse().map(l=>`<div class="gym-log-row"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:0.75rem;font-weight:600;color:var(--t1)">${typeLabel[l.type]||l.type}</span><span style="font-size:0.62rem;color:var(--t3);font-family:'JetBrains Mono',monospace">${l.date}</span></div><div style="display:flex;gap:10px;font-size:0.68rem;color:var(--t3)">${l.dur?`<span>⏱ ${l.dur}min</span>`:''} ${l.wt?`<span>⚖️ ${l.wt}kg</span>`:''} ${l.cal?`<span>🔥 ${l.cal}cal</span>`:''}</div>${l.notes?`<div style="font-size:0.65rem;color:var(--t3);margin-top:3px;font-style:italic">${l.notes}</div>`:''}</div>`).join('');
@@ -1879,9 +1878,41 @@ function loadDb() {
 
     const savedTargets = localStorage.getItem(DB_KEYS.mr_targets);
     mrTargets = savedTargets ? JSON.parse(savedTargets) : MR.map(r => r.defaultTarget);
+    if (mrTargets && mrTargets.length === 7) {
+      const oldTargets = [...mrTargets];
+      mrTargets = [
+        oldTargets[0] + oldTargets[1], // Yoga & Meditation
+        oldTargets[2],                  // Pranayama
+        oldTargets[3],                  // Exercise / Gym
+        oldTargets[4],                  // Geeta Reading
+        oldTargets[5],                  // Study / Learning
+        oldTargets[6]                   // Journaling
+      ];
+      localStorage.setItem(DB_KEYS.mr_targets, JSON.stringify(mrTargets));
+    }
 
     const savedDailyLogs = localStorage.getItem(DB_KEYS.mr_daily_logs);
     mrDailyLogs = savedDailyLogs ? JSON.parse(savedDailyLogs) : getSeedMRLogs();
+    
+    // Migration: combine "Yoga" and "Meditation" into "Yoga & Meditation"
+    let migrated = false;
+    Object.keys(mrDailyLogs).forEach(date => {
+      const dayLog = mrDailyLogs[date];
+      if (dayLog && (dayLog['Meditation'] !== undefined || dayLog['Yoga'] !== undefined)) {
+        const medLog = dayLog['Meditation'] || { target: 20, done: 0 };
+        const yogaLog = dayLog['Yoga'] || { target: 30, done: 0 };
+        dayLog['Yoga & Meditation'] = {
+          target: (medLog.target || 0) + (yogaLog.target || 0),
+          done: (medLog.done || 0) + (yogaLog.done || 0)
+        };
+        delete dayLog['Meditation'];
+        delete dayLog['Yoga'];
+        migrated = true;
+      }
+    });
+    if (migrated) {
+      localStorage.setItem(DB_KEYS.mr_daily_logs, JSON.stringify(mrDailyLogs));
+    }
 
     const savedShlokIdx = localStorage.getItem(DB_KEYS.shlok_idx);
     if (savedShlokIdx !== null) curShlokIdx = parseInt(savedShlokIdx);
@@ -2662,7 +2693,7 @@ function exportGymCSV() {
     alert("No gym logs logged yet!");
     return;
   }
-  const typeMap = { W: 'Weights', C: 'Cardio', H: 'HIIT', Y: 'Yoga', P: 'Pranayama', R: 'Rest Day', O: 'Other' };
+  const typeMap = { W: 'Weights', C: 'Cardio', H: 'HIIT', Y: 'Yoga & Meditation', P: 'Pranayama', R: 'Rest Day', O: 'Other' };
   gymLogs.forEach(g => {
     const typeLabel = typeMap[g.type] || g.type;
     const cleanNotes = (g.notes || '').replace(/"/g, '""');
