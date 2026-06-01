@@ -740,20 +740,48 @@ select.inp option{background:var(--panel)}
 
     <!-- Instruction Panel -->
     <div class="panel" style="margin-top: 1rem;">
-      <div class="ph" style="cursor:pointer" onclick="toggleElement('sync-guide')">📖 How to Setup Google Sheets Sync (Click to Expand/Collapse)</div>
+      <div class="ph" style="cursor:pointer; display:flex; justify-content:space-between; align-items:center;" onclick="toggleElement('sync-guide')">
+        <span>📖 Google Sheets Connection Wizard (Easy Setup Guide)</span>
+        <span style="font-size:0.65rem; background:var(--blue2); color:#fff; padding:2px 8px; border-radius:10px; font-weight:700;">Click to Expand/Collapse</span>
+      </div>
       <div id="sync-guide" style="display:none; font-size:0.75rem; color:var(--t2); line-height:1.6; margin-top:0.5rem">
-        <ol style="margin-left:1.2rem; display:flex; flex-direction:column; gap:6px">
-          <li>Create a new <strong>Google Sheet</strong> in your Google Drive.</li>
-          <li>Rename the default sheet to <strong>Summary</strong>, or simply run the script to initialize pages.</li>
-          <li>Go to <strong>Extensions</strong> &gt; <strong>Apps Script</strong>.</li>
-          <li>Paste the code below, replacing all placeholder script contents.</li>
-          <li>Click <strong>Save</strong> and then click <strong>Deploy</strong> &gt; <strong>New Deployment</strong>.</li>
-          <li>Select type: <strong>Web App</strong>. Set "Execute as": <strong>Me</strong>. Set "Who has access": <strong>Anyone</strong>.</li>
-          <li>Deploy, copy the Web App URL, and paste it into the Web App URL box above.</li>
-        </ol>
-        <div class="div"></div>
-        <div style="font-size:0.7rem; font-weight:600; margin-bottom:4px; color:var(--t1)">Google Apps Script Source Code:</div>
-        <pre class="code-pre" id="script-code-copy" style="max-height: 250px; overflow-y: auto; cursor: pointer;" onclick="copyScriptCode()">
+        
+        <!-- Wizard Progress & Navigation -->
+        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--bg2); padding:10px; border-radius:6px; margin-bottom:12px; border:1px solid var(--border);">
+          <div style="font-weight:700; color:var(--t1);" id="wizard-progress-title">Step 1 of 5: Create Google Sheet</div>
+          <div style="display:flex; gap:6px;">
+            <button class="ibtn-sm" id="btn-wizard-prev" onclick="prevWizardStep()" style="padding:4px 10px; font-size:0.7rem;" disabled>← Back</button>
+            <button class="ibtn-sm btn-b" id="btn-wizard-next" onclick="nextWizardStep()" style="padding:4px 10px; font-size:0.7rem; font-weight:600;">Next →</button>
+          </div>
+        </div>
+
+        <!-- Wizard Slides -->
+        <div id="wizard-steps-container" style="background:var(--panel-bg, rgba(255,255,255,0.02)); padding:12px; border-radius:6px; border:1px solid var(--border); min-height:120px; display:flex; flex-direction:column; justify-content:center;">
+          
+          <!-- Step 1 -->
+          <div class="wizard-slide" id="wiz-step-1">
+            <p style="margin-bottom:8px; font-size:0.75rem; color:var(--t1); font-weight:500;">1️⃣ Open your Google Sheets home page, and create a **new blank spreadsheet**.</p>
+            <p style="font-size:0.72rem; color:var(--t3);">Rename the sheet to something meaningful to you, like <em>Gourav Life OS Sheet</em>.</p>
+            <div style="margin-top:10px; display:flex; gap:10px; align-items:center;">
+              <a href="https://sheets.new" target="_blank" class="ibtn-sm btn-g" style="text-decoration:none; display:inline-flex; align-items:center; gap:4px; font-weight:600; padding:6px 12px; font-size:0.7rem;">📄 Create New Google Sheet</a>
+              <span style="font-size:0.65rem; color:var(--t3);">(Opens in a new tab)</span>
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="wizard-slide" id="wiz-step-2" style="display:none;">
+            <p style="margin-bottom:8px; font-size:0.75rem; color:var(--t1); font-weight:500;">1️⃣ Inside your new Google Sheet, look at the top menu bar.</p>
+            <p style="font-size:0.75rem; color:var(--t1); font-weight:500;">2️⃣ Click **Extensions** &gt; **Apps Script**.</p>
+            <p style="font-size:0.72rem; color:var(--t3); margin-top:6px;">This will open a developer code editor tab. Don't worry, you don't have to write any code!</p>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="wizard-slide" id="wiz-step-3" style="display:none;">
+            <p style="margin-bottom:8px; font-size:0.75rem; color:var(--t1); font-weight:500;">1️⃣ Click the green button below to copy the connection script to your clipboard.</p>
+            <p style="margin-bottom:12px; font-size:0.75rem; color:var(--t1); font-weight:500;">2️⃣ Go to your Apps Script tab, delete any default code inside it, and **paste** the copied script.</p>
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <button class="ibtn-sm btn-g" onclick="copyScriptCode()" style="padding:8px 14px; font-weight:700; width:fit-content; display:flex; align-items:center; gap:5px; font-size:0.72rem;"><span id="copy-icon">📋</span> <span id="copy-text">Copy Script Code to Clipboard</span></button>
+              <pre class="code-pre" id="script-code-copy" style="max-height: 120px; overflow-y: auto; font-size:0.6rem; margin-top:4px;">
 function doPost(e) {
   try {
     var data = JSON.parse(e.postData.contents);
@@ -962,6 +990,29 @@ function countKeys(obj) {
   }
   return count;
 }</pre>
+            </div>
+          </div>
+
+          <!-- Step 4 -->
+          <div class="wizard-slide" id="wiz-step-4" style="display:none;">
+            <p style="margin-bottom:8px; font-size:0.75rem; color:var(--t1); font-weight:500;">1️⃣ Click the **Deploy** (blue button in top-right) and choose **New Deployment**.</p>
+            <p style="margin-bottom:8px; font-size:0.75rem; color:var(--t1); font-weight:500;">2️⃣ Click the **Gear icon** next to "Select type" and choose **Web App**.</p>
+            <p style="margin-bottom:8px; font-size:0.75rem; color:var(--t1); font-weight:500;">3️⃣ Make sure configuration is set to:</p>
+            <ul style="margin-left:1.2rem; margin-bottom:8px; display:flex; flex-direction:column; gap:4px; font-size:0.7rem;">
+              <li><strong>Execute as:</strong> Me (your email)</li>
+              <li><strong>Who has access:</strong> <strong style="color:var(--blue2)">Anyone</strong></li>
+            </ul>
+            <p style="font-size:0.72rem; color:var(--t3);">4️⃣ Click **Deploy**, authorize access with your Google account, click **Advanced** &gt; **Go to project (unsafe)**, and select **Allow**.</p>
+          </div>
+
+          <!-- Step 5 -->
+          <div class="wizard-slide" id="wiz-step-5" style="display:none;">
+            <p style="margin-bottom:6px; font-size:0.75rem; color:var(--t1); font-weight:500;">1️⃣ Copy the **Web App URL** shown at the end of deployment (ends with `/exec`).</p>
+            <p style="margin-bottom:6px; font-size:0.75rem; color:var(--t1); font-weight:500;">2️⃣ Paste it into the **Apps Script Web App URL** box at the top of settings.</p>
+            <p style="margin-bottom:8px; font-size:0.75rem; color:var(--t1); font-weight:500;">3️⃣ Paste your standard spreadsheet URL into the **Google Spreadsheet URL** box.</p>
+            <p style="font-weight:700; color:var(--green2); font-size:0.78rem; margin-top:8px;">🎉 Perfect! Click "Sync Now ⚡" to verify your connection!</p>
+          </div>
+        </div>
 
       </div>
     </div>
@@ -2089,11 +2140,68 @@ function copyScriptCode() {
   if (!codeEl) return;
   const code = codeEl.textContent.trim();
   navigator.clipboard.writeText(code).then(() => {
-    alert('Google Apps Script code copied to clipboard!');
+    const icon = document.getElementById('copy-icon');
+    const txt = document.getElementById('copy-text');
+    if (icon) icon.textContent = '✅';
+    if (txt) txt.textContent = 'Script Copied!';
+    setTimeout(() => {
+      if (icon) icon.textContent = '📋';
+      if (txt) txt.textContent = 'Copy Script Code to Clipboard';
+    }, 3000);
   }).catch(err => {
     console.error('Failed to copy code: ', err);
     alert('Failed to copy code. Please manually select and copy.');
   });
+}
+
+let currentWizStep = 1;
+const totalWizSteps = 5;
+const stepTitles = [
+  "Step 1 of 5: Create Google Sheet",
+  "Step 2 of 5: Open Apps Script",
+  "Step 3 of 5: Copy & Paste Code",
+  "Step 4 of 5: Deploy Web App",
+  "Step 5 of 5: Connect and Sync"
+];
+
+function updateWizardUI() {
+  for (let i = 1; i <= totalWizSteps; i++) {
+    const slide = document.getElementById('wiz-step-' + i);
+    if (slide) slide.style.display = i === currentWizStep ? 'block' : 'none';
+  }
+  
+  const titleEl = document.getElementById('wizard-progress-title');
+  if (titleEl) titleEl.textContent = stepTitles[currentWizStep - 1];
+  
+  const prevBtn = document.getElementById('btn-wizard-prev');
+  const nextBtn = document.getElementById('btn-wizard-next');
+  if (prevBtn) prevBtn.disabled = currentWizStep === 1;
+  if (nextBtn) {
+    if (currentWizStep === totalWizSteps) {
+      nextBtn.textContent = 'Finish ✓';
+      nextBtn.onclick = () => {
+        const guide = document.getElementById('sync-guide');
+        if (guide) guide.style.display = 'none';
+      };
+    } else {
+      nextBtn.textContent = 'Next →';
+      nextBtn.onclick = nextWizardStep;
+    }
+  }
+}
+
+function nextWizardStep() {
+  if (currentWizStep < totalWizSteps) {
+    currentWizStep++;
+    updateWizardUI();
+  }
+}
+
+function prevWizardStep() {
+  if (currentWizStep > 1) {
+    currentWizStep--;
+    updateWizardUI();
+  }
 }
 
 function updateTopChips() {
