@@ -1711,7 +1711,13 @@ function loadDb() {
   }
   // Attempt to pull latest data from Google Sheet if URL is configured
   if (syncSettings.url) {
-    fetchRemoteData();
+    if (syncSettings.lastSync) {
+      fetchRemoteData();
+    } else {
+      // First-time sync: initialize the sheet with local data instead of pulling empty data
+      console.info('[Sync] First-time sync detected. Pushing local data to Google Sheet...');
+      syncNow();
+    }
   }
 }
 
@@ -2413,6 +2419,22 @@ function adjustZoom(dir) {
   } else if (localStorage.getItem('gourav_life_os_auto_bypass') === 'true') {
     launchApp('dashboard');
   }
+
+  // Dynamic Sync: Pull latest changes when user switches back to the tab
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && syncSettings.url && syncSettings.lastSync) {
+      console.info('[Sync] Tab became visible. Checking for Google Sheet updates...');
+      fetchRemoteData();
+    }
+  });
+
+  // Dynamic Sync: Poll for updates every 60 seconds (only when tab is active)
+  setInterval(() => {
+    if (!document.hidden && syncSettings.url && syncSettings.lastSync) {
+      console.info('[Sync] Periodic background sync check...');
+      fetchRemoteData();
+    }
+  }, 60000);
 })();
 
 // Listen for hash changes to navigate between pages dynamically
