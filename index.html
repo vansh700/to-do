@@ -362,17 +362,17 @@ select.inp option{background:var(--panel)}
     <div class="w-flag">
       <div class="fs fs-s"></div><div class="fs fs-w"></div><div class="fs fs-g"></div>
     </div>
-    <div class="w-shlok">
-      <div class="ws-label" id="ws-label">Bhagavad Gita — Chapter 1, Verse 1 · Today's Shlok</div>
-      <div class="ws-skt" id="ws-skt">धृतराष्ट्र उवाच<br>धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः।<br>मामकाः पाण्डवाश्चैव किमकुर्वत सञ्जय॥</div>
-      <div class="ws-eng" id="ws-eng">Dhritarashtra said: O Sanjaya, after my sons and the sons of Pandu assembled in the place of pilgrimage at Kurukshetra, desiring to fight, what did they do?</div>
-      <div class="ws-ref" id="ws-ref">Bhagavad Gita · Chapter 1, Verse 1 · Theme: Setting the Stage</div>
+    <div class="w-shlok" style="background:rgba(255,153,51,0.06); border:1px solid rgba(255,153,51,0.22); border-radius:12px; padding:1.5rem 1.75rem; margin-bottom:1.5rem; text-align:center;">
+      <div class="ws-label" id="ws-label" style="font-size:0.62rem; color:var(--saffron); font-weight:700; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.75rem;">Bhagavad Gita — Chapter 1, Verse 1 · Today's Shlok</div>
+      <div class="ws-skt" id="ws-skt" style="font-family:'Noto Sans Devanagari',sans-serif; font-size:1.15rem; color:#7c2d12; line-height:1.85; font-weight:600; margin-bottom:0.75rem;">धृतराष्ट्र उवाच<br>धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः।<br>मामकाः पाण्डवाश्चैव किमकुर्वत सञ्जय॥</div>
+      <div class="ws-hin" id="ws-hin" style="font-size:0.85rem; color:var(--t1); font-weight:500; line-height:1.6; margin-bottom:0.5rem;">धृतराष्ट्र ने कहा: हे संजय! धर्मभूमि कुरुक्षेत्र में युद्ध की इच्छा से एकत्र हुए मेरे और पाण्डु के पुत्रों ने क्या किया?</div>
+      <div class="ws-eng" id="ws-eng" style="font-size:0.75rem; color:var(--t3); font-style:italic; line-height:1.6; margin-bottom:0.5rem;">Dhritarashtra said: O Sanjaya, after my sons and the sons of Pandu assembled in the place of pilgrimage at Kurukshetra, desiring to fight, what did they do?</div>
+      <div class="ws-ref" id="ws-ref" style="font-size:0.62rem; color:var(--saffron); margin-top:0.75rem; font-weight:600;">Bhagavad Gita · Chapter 1, Verse 1 · Theme: Setting the Stage</div>
     </div>
     <div class="w-title">Gourav Life OS &nbsp;<span>FY 2026–27</span></div>
     <div class="w-sub">Your complete personal dashboard — expenses, morning routine, fitness &amp; spiritual growth</div>
     <div class="w-btns">
-      <button class="btn-go" onclick="launch()">▶&nbsp; Start My Day</button>
-      <button class="btn-ghost" onclick="launch()">Open Dashboard</button>
+      <button class="btn-go" onclick="launch()">▶&nbsp; Continue to Dashboard</button>
     </div>
   </div>
 </div>
@@ -718,7 +718,10 @@ select.inp option{background:var(--panel)}
           </div>
           <div style="margin-top:4px">
             <div style="font-size:0.65rem; color:var(--t3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.04em">App Preferences</div>
-            <button class="btn btn-b" style="width:100%; justify-content:center; padding:8px" onclick="resetAutoBypass()">Show Welcome Screen on next load</button>
+            <div style="display:flex; justify-content:space-between; align-items:center; background:var(--cell); padding:6px 10px; border-radius:6px; border:1px solid var(--border)">
+              <span style="font-size:0.75rem; color:var(--t2)">Always Show Welcome Screen</span>
+              <input type="checkbox" id="pref-always-welcome" onchange="toggleAlwaysWelcome(this.checked)" style="cursor:pointer; width:16px; height:16px;">
+            </div>
           </div>
         </div>
       </div>
@@ -1115,10 +1118,12 @@ function renderShlokStrip(i){
   // also update welcome
   const wsLabel = document.getElementById('ws-label');
   const wsSkt = document.getElementById('ws-skt');
+  const wsHin = document.getElementById('ws-hin');
   const wsEng = document.getElementById('ws-eng');
   const wsRef = document.getElementById('ws-ref');
   if (wsLabel) wsLabel.textContent=`Bhagavad Gita — Chapter ${s.ch}, Verse ${s.v} · Today's Shlok`;
   if (wsSkt) wsSkt.innerHTML=s.skt.replace(/\n/g,'<br>');
+  if (wsHin) wsHin.textContent=s.hin || '';
   if (wsEng) wsEng.textContent=s.eng;
   if (wsRef) wsRef.textContent=`Bhagavad Gita · Chapter ${s.ch}, Verse ${s.v} · ${s.theme}`;
 }
@@ -2698,6 +2703,11 @@ function switchPage(id){
 function launchApp(targetPageId = 'dashboard'){
   loadDb();
   
+  const chk = document.getElementById('pref-always-welcome');
+  if (chk) {
+    chk.checked = localStorage.getItem('gourav_always_show_welcome') !== 'false';
+  }
+  
   const welcome = document.getElementById('welcome');
   if (welcome) welcome.style.display = 'none';
   
@@ -2731,7 +2741,6 @@ function launch(){
   loadDb();
   document.getElementById('welcome').classList.add('out');
   setTimeout(()=>{
-    localStorage.setItem('gourav_life_os_auto_bypass', 'true');
     const hash = window.location.hash.replace('#', '') || 'dashboard';
     const validPages = ['dashboard', 'morning', 'expenses', 'annual', 'gym', 'settings'];
     const targetPageId = validPages.includes(hash) ? hash : 'dashboard';
@@ -2739,9 +2748,8 @@ function launch(){
   },650);
 }
 
-function resetAutoBypass() {
-  localStorage.removeItem('gourav_life_os_auto_bypass');
-  alert('Welcome screen preference reset! The Welcome screen will show up on next load.');
+function toggleAlwaysWelcome(checked) {
+  localStorage.setItem('gourav_always_show_welcome', checked ? 'true' : 'false');
 }
 
 let currentZoom = parseInt(localStorage.getItem('gourav_zoom_level')) || 20;
@@ -2767,10 +2775,11 @@ function adjustZoom(dir) {
   
   const hash = window.location.hash.replace('#', '');
   const validPages = ['dashboard', 'morning', 'expenses', 'annual', 'gym', 'settings'];
+  const alwaysWelcome = localStorage.getItem('gourav_always_show_welcome') !== 'false';
   
   if (hash && validPages.includes(hash)) {
     launchApp(hash);
-  } else if (localStorage.getItem('gourav_life_os_auto_bypass') === 'true') {
+  } else if (!alwaysWelcome) {
     launchApp('dashboard');
   }
 
