@@ -430,14 +430,12 @@ select.inp option{background:var(--panel)}
       </div>
       <div style="width:310px;flex-shrink:0;display:flex;flex-direction:column;gap:1.25rem">
         <div class="panel">
-          <div class="ph">April Budget Status</div>
+          <div class="ph" id="bud-status-title">April Budget Status</div>
           <div id="bud-status-list"></div>
         </div>
         <div class="panel">
           <div class="ph">Smart Insights</div>
-          <div class="insight" style="border-left-color:var(--red2)"><strong style="color:var(--red2)">⚠️ April Overspent:</strong> ₹2,036 over. Refreshment (₹3,980 vs ₹2,000 cap) and Medical (₹2,520 vs ₹500) were main drivers.</div>
-          <div class="insight" style="border-left-color:var(--green2)"><strong style="color:var(--green2)">✅ May on track:</strong> Only ₹9,137 spent — ₹10,863 under budget. Strong control on food &amp; tea.</div>
-          <div class="insight" style="border-left-color:var(--amber2)"><strong style="color:var(--amber2)">📌 Gym:</strong> ₹2,000/month consistent — ₹8,000 in FY. On track vs ₹18,000 annual cap.</div>
+          <div id="smart-insights-list"></div>
         </div>
       </div>
     </div>
@@ -1454,6 +1452,8 @@ function switchMonth(m,el){
   document.querySelectorAll('.mtab').forEach(t=>t.classList.remove('active'));
   if(el)el.classList.add('active');
   renderExpPage();
+  buildBudgetStatusList();
+  updateDashboardKpis();
 }
 
 function addExpense(){
@@ -1716,8 +1716,19 @@ function renderDailyLog(){
 
 function buildBudgetStatusList(){
   const el=document.getElementById('bud-status-list');if(!el)return;
+  const titleEl = document.getElementById('bud-status-title');
+  if (titleEl) {
+    const monthNameMap = {
+      'Apr': 'April', 'May': 'May', 'Jun': 'June', 'Jul': 'July',
+      'Aug': 'August', 'Sep': 'September', 'Oct': 'October', 'Nov': 'November',
+      'Dec': 'December', 'Jan': 'January', 'Feb': 'February', 'Mar': 'March'
+    };
+    const shortMonth = curMonth.split(' ')[0];
+    const fullMonth = monthNameMap[shortMonth] || shortMonth;
+    titleEl.textContent = `${fullMonth} Budget Status`;
+  }
   el.innerHTML=CATS.map((cat,i)=>{
-    const spent=getCatTotal('Apr 2026',cat);
+    const spent=getCatTotal(curMonth,cat);
     const budget=CAT_BUDGETS[i];
     const pct=Math.min(100,Math.round(spent/budget*100));
     const col=spent>budget?'var(--red)':pct>80?'var(--amber)':CAT_COLORS[i];
@@ -2428,6 +2439,105 @@ function updateDashboardKpis() {
       gymVal.style.color = gymFy > 18000 ? 'var(--red2)' : 'var(--purple2)';
     }
   }
+  
+  updateSmartInsights();
+}
+
+function updateSmartInsights() {
+  const el = document.getElementById('smart-insights-list');
+  if (!el) return;
+
+  const monthNameMap = {
+    'Apr': 'April', 'May': 'May', 'Jun': 'June', 'Jul': 'July',
+    'Aug': 'August', 'Sep': 'September', 'Oct': 'October', 'Nov': 'November',
+    'Dec': 'December', 'Jan': 'January', 'Feb': 'February', 'Mar': 'March'
+  };
+  const shortMonth = curMonth.split(' ')[0];
+  const fullMonth = monthNameMap[shortMonth] || shortMonth;
+
+  let html = '';
+
+  // 1. Budget Status Insight for selected month
+  const spent = getMonthTotal(curMonth);
+  const budget = MONTHS_DATA[curMonth]?.budget || 20000;
+  if (spent > budget) {
+    const over = spent - budget;
+    const overCats = [];
+    CATS.forEach((cat, idx) => {
+      const catSpent = getCatTotal(curMonth, cat);
+      const catBudget = CAT_BUDGETS[idx];
+      if (catSpent > catBudget) {
+        overCats.push({
+          name: cat,
+          spent: catSpent,
+          budget: catBudget,
+          excess: catSpent - catBudget
+        });
+      }
+    });
+    overCats.sort((a, b) => b.excess - a.excess);
+    const drivers = overCats.slice(0, 2).map(c => `${c.name} (₹${c.spent.toLocaleString('en-IN')} vs ₹${c.budget.toLocaleString('en-IN')} cap)`).join(' and ');
+    const driversText = drivers ? ` ${drivers} were main drivers.` : '';
+    html += `<div class="insight" style="border-left-color:var(--red2)"><strong style="color:var(--red2)">⚠️ ${fullMonth} Overspent:</strong> ₹${over.toLocaleString('en-IN')} over.${driversText}</div>`;
+  } else {
+    const under = budget - spent;
+    const underCats = [];
+    CATS.forEach((cat, idx) => {
+      const catSpent = getCatTotal(curMonth, cat);
+      const catBudget = CAT_BUDGETS[idx];
+      if (catSpent < catBudget && catBudget > 0) {
+        underCats.push({
+          name: cat,
+          pct: Math.round((catSpent / catBudget) * 100),
+          diff: catBudget - catSpent
+        });
+      }
+    });
+    const goodControl = underCats.filter(c => c.pct < 70).slice(0, 2).map(c => c.name).join(' & ');
+    const controlText = goodControl ? ` Strong control on ${goodControl}.` : ' Good control on spending.';
+    html += `<div class="insight" style="border-left-color:var(--green2)"><strong style="color:var(--green2)">✅ ${fullMonth} on track:</strong> Only ₹${spent.toLocaleString('en-IN')} spent — ₹${under.toLocaleString('en-IN')} under budget.${controlText}</div>`;
+  }
+
+  // 2. Gym & Fitness Tracker (FY)
+  const gymFy = getGymSpendTotal();
+  let activeGymMonths = 0;
+  let gymMonthlySum = 0;
+  MONTH_KEYS.forEach(m => {
+    const mGym = getCatTotal(m, "Gym & Fitness");
+    if (mGym > 0) {
+      activeGymMonths++;
+      gymMonthlySum += mGym;
+    }
+  });
+  const avgGym = activeGymMonths > 0 ? Math.round(gymMonthlySum / activeGymMonths) : 0;
+  if (avgGym > 0) {
+    const consistency = activeGymMonths >= 2 ? 'consistent' : 'average';
+    const gymStatus = gymFy > 18000 ? 'Cap exceeded!' : 'On track vs ₹18,000 annual cap.';
+    const statusColor = gymFy > 18000 ? 'var(--red2)' : 'var(--amber2)';
+    html += `<div class="insight" style="border-left-color:${statusColor}"><strong style="color:${statusColor}">📌 Gym:</strong> ₹${avgGym.toLocaleString('en-IN')}/month ${consistency} — ₹${gymFy.toLocaleString('en-IN')} in FY. ${gymStatus}</div>`;
+  } else {
+    html += `<div class="insight" style="border-left-color:var(--amber2)"><strong style="color:var(--amber2)">📌 Gym:</strong> No gym expenses logged in FY. Annual cap is ₹18,000.</div>`;
+  }
+
+  // 3. Morning Routine Performance (Last 7 Days)
+  const history = getWeeklyData(mrSelDate);
+  const totalScore = history.reduce((sum, h) => sum + h.score, 0);
+  const avgScore = Math.round(totalScore / history.length);
+  let statusColor = 'var(--red2)';
+  let routineText = '';
+  if (avgScore >= 80) {
+    statusColor = 'var(--green2)';
+    routineText = `🔥 Excellent routine control! Averaging ${avgScore}% completion over the last 7 days. Keep it up!`;
+  } else if (avgScore >= 50) {
+    statusColor = 'var(--amber2)';
+    routineText = `⚡ Consistent effort. Averaging ${avgScore}% completion over the last 7 days. Push for >80%!`;
+  } else {
+    statusColor = 'var(--red2)';
+    routineText = `⚠️ Averaging ${avgScore}% completion over the last 7 days. Time to rebuild your morning routine habits!`;
+  }
+  html += `<div class="insight" style="border-left-color:${statusColor}"><strong style="color:${statusColor}">🌅 Morning Routine:</strong> ${routineText}</div>`;
+
+  el.innerHTML = html;
 }
 
 function getGymSpendTotal() {
