@@ -698,9 +698,16 @@ select.inp option{background:var(--panel)}
         <div style="display:flex; flex-direction:column; gap:10px; margin-top:0.5rem;">
           <div>
             <div style="font-size:0.65rem; color:var(--t3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.04em">Apps Script Web App URL</div>
-            <input class="inp" type="text" id="sync-script-url" style="width:100%; font-size:0.7rem; padding:6px 8px" placeholder="https://script.google.com/macros/s/.../exec" onchange="saveSyncSettings()">
+            <input class="inp" type="text" id="sync-script-url" style="width:100%; font-size:0.7rem; padding:6px 8px; margin-bottom:6px;" placeholder="https://script.google.com/macros/s/.../exec" onchange="saveSyncSettings()">
           </div>
-          <div style="display:flex; justify-content:space-between; align-items:center">
+          <div>
+            <div style="font-size:0.65rem; color:var(--t3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.04em; display:flex; justify-content:space-between; align-items:center;">
+              <span>Google Spreadsheet URL (Optional)</span>
+              <a id="btn-open-sheet" href="#" target="_blank" style="display:none; color:var(--blue2); text-decoration:none; font-weight:600; font-size:0.7rem;">🔗 Open Sheet</a>
+            </div>
+            <input class="inp" type="text" id="sync-sheet-url" style="width:100%; font-size:0.7rem; padding:6px 8px" placeholder="https://docs.google.com/spreadsheets/d/.../edit" onchange="saveSyncSettings()">
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
             <span style="font-size:0.72rem; color:var(--t2)">Status: <strong id="sync-status-badge" style="color:var(--t3)">Not Configured</strong></span>
             <button class="btn btn-b" id="btn-sync-now" style="padding:6px 14px; font-size:0.75rem" onclick="syncNow()">Sync Now ⚡</button>
           </div>
@@ -1080,7 +1087,7 @@ const MR=[
 ];
 let mrTargets=MR.map(r=>r.defaultTarget);
 let mrDailyLogs={};
-let syncSettings={url:'',lastSync:null};
+let syncSettings={url:'',sheetUrl:'',lastSync:null};
 let mrSelDate = new Date().toISOString().split('T')[0];
 
 function getSeedMRLogs() {
@@ -1677,7 +1684,8 @@ function loadDb() {
     if (savedShlokIdx !== null) curShlokIdx = parseInt(savedShlokIdx);
 
     const savedSync = localStorage.getItem(DB_KEYS.sync_settings);
-    syncSettings = savedSync ? JSON.parse(savedSync) : { url: '', lastSync: null };
+    syncSettings = savedSync ? JSON.parse(savedSync) : { url: '', sheetUrl: '', lastSync: null };
+    if (!syncSettings.sheetUrl) syncSettings.sheetUrl = '';
 
     const savedCatBudgets = localStorage.getItem(DB_KEYS.cat_budgets);
     if (savedCatBudgets) {
@@ -1699,7 +1707,7 @@ function loadDb() {
     gymLogs = [];
     mrTargets = MR.map(r => r.defaultTarget);
     mrDailyLogs = getSeedMRLogs();
-    syncSettings = { url: '', lastSync: null };
+    syncSettings = { url: '', sheetUrl: '', lastSync: null };
   }
   // Attempt to pull latest data from Google Sheet if URL is configured
   if (syncSettings.url) {
@@ -1867,6 +1875,19 @@ function updateSyncStats() {
   if (urlInp && syncSettings.url) {
     urlInp.value = syncSettings.url;
   }
+  const sheetInp = document.getElementById('sync-sheet-url');
+  if (sheetInp && syncSettings.sheetUrl) {
+    sheetInp.value = syncSettings.sheetUrl;
+  }
+  const openSheetBtn = document.getElementById('btn-open-sheet');
+  if (openSheetBtn) {
+    if (syncSettings.sheetUrl) {
+      openSheetBtn.href = syncSettings.sheetUrl;
+      openSheetBtn.style.display = 'inline';
+    } else {
+      openSheetBtn.style.display = 'none';
+    }
+  }
   
   const badge = document.getElementById('sync-status-badge');
   if (badge) {
@@ -1953,10 +1974,11 @@ function importDb() {
 
 function saveSyncSettings() {
   const urlInp = document.getElementById('sync-script-url');
-  if (urlInp) {
-    syncSettings.url = urlInp.value.trim();
-    saveDb();
-  }
+  const sheetInp = document.getElementById('sync-sheet-url');
+  if (urlInp) syncSettings.url = urlInp.value.trim();
+  if (sheetInp) syncSettings.sheetUrl = sheetInp.value.trim();
+  saveDb();
+  updateSyncStats();
 }
 
 async function syncNow() {
