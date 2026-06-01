@@ -202,6 +202,28 @@ body{background:var(--bg);color:var(--t1);font-family:'Inter',sans-serif;font-si
 .del-exp-btn:active{transform:scale(0.95)}
 @keyframes fadeOutRow{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(20px)}}
 .row-removing td{animation:fadeOutRow 0.3s ease forwards}
+.table-inp {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 4px 6px;
+  font-family: inherit;
+  font-size: 0.72rem;
+  color: var(--t1);
+  width: 100%;
+  box-sizing: border-box;
+  transition: all 0.1s ease;
+}
+.table-inp:hover {
+  background: var(--bg2);
+  border-color: var(--border);
+}
+.table-inp:focus {
+  background: var(--bg);
+  border-color: var(--blue2);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(79, 142, 247, 0.12);
+}
 .cv{color:var(--t1)}.ce{color:var(--t4)}.cl{color:var(--amber2)}
 
 /* ══ MONTH TABS ══ */
@@ -526,6 +548,15 @@ select.inp option{background:var(--panel)}
     <div class="g2" style="margin-bottom:1rem">
       <div class="panel"><div class="ph" id="cat-ch-title">Category Breakdown</div><div class="cw" style="height:260px"><canvas id="catBarChart" role="img" aria-label="Category bar chart">Category breakdown.</canvas></div></div>
       <div class="panel"><div class="ph" id="daily-ch-title">Daily Spending</div><div class="cw" style="height:260px"><canvas id="dailyLineChart" role="img" aria-label="Daily spending chart">Daily spending trend.</canvas></div></div>
+    </div>
+    <div class="panel" style="margin-bottom:1rem">
+      <div class="ph" style="display:flex; justify-content:space-between; align-items:center;">
+        <span>📝 Expense Entries (Click cells to edit like Excel)</span>
+        <span style="font-size:0.65rem; color:var(--t3);" id="entries-count-badge">0 entries</span>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="exp-tbl" id="detailedExpensesTable"></table>
+      </div>
     </div>
     <div class="panel" style="margin-bottom:1rem"><div class="ph" id="bud-tbl-title">Budget vs Actual</div><div style="overflow-x:auto"><table class="exp-tbl" id="budgetTable"></table></div></div>
     <div class="panel"><div class="ph" id="daily-log-title">Daily Expense Log</div><div style="overflow-x:auto"><table class="daily-tbl" id="dailyLogTable"></table></div></div>
@@ -1514,7 +1545,110 @@ function renderExpPage(){
   document.getElementById('daily-ch-title').textContent=curMonth+' — Daily Spending';
   document.getElementById('bud-tbl-title').textContent=curMonth+' — Budget vs Actual';
   document.getElementById('daily-log-title').textContent=curMonth+' — Daily Log';
-  renderCatBar();renderDailyLine();renderBudgetTable();renderDailyLog();
+  renderCatBar();renderDailyLine();renderBudgetTable();renderDailyLog();renderDetailedExpensesTable();
+}
+
+function renderDetailedExpensesTable() {
+  const table = document.getElementById('detailedExpensesTable');
+  const badge = document.getElementById('entries-count-badge');
+  if (!table) return;
+  
+  const list = userExp[curMonth] || [];
+  if (badge) badge.textContent = `${list.length} transaction${list.length === 1 ? '' : 's'}`;
+  
+  if (list.length === 0) {
+    table.innerHTML = `<tr><td style="text-align:center; color:var(--t3); padding:2rem 1rem;">No transactions logged for this month. Use the form above to add one.</td></tr>`;
+    return;
+  }
+  
+  let html = `<thead>
+    <tr>
+      <th style="width:140px;">Date</th>
+      <th style="width:180px;">Category</th>
+      <th style="width:120px;">Amount (₹)</th>
+      <th>Notes / Description</th>
+      <th style="width:60px; text-align:center;">Action</th>
+    </tr>
+  </thead>
+  <tbody>`;
+  
+  list.forEach((item) => {
+    const catOptions = CATS.map(cat => `<option value="${cat}" ${item.cat === cat ? 'selected' : ''}>${cat}</option>`).join('');
+    
+    html += `<tr id="exp-row-${item.id}">
+      <td>
+        <input type="date" class="table-inp mono" value="${item.date}" onchange="updateExpenseField('${curMonth}', '${item.id}', 'date', this.value)">
+      </td>
+      <td>
+        <select class="table-inp" style="padding: 3px 4px;" onchange="updateExpenseField('${curMonth}', '${item.id}', 'cat', this.value)">
+          ${catOptions}
+        </select>
+      </td>
+      <td>
+        <input type="number" class="table-inp mono" style="text-align:right; font-weight:700;" value="${item.amount}" onchange="updateExpenseField('${curMonth}', '${item.id}', 'amount', this.value)">
+      </td>
+      <td>
+        <input type="text" class="table-inp" value="${item.notes || ''}" placeholder="None" onchange="updateExpenseField('${curMonth}', '${item.id}', 'notes', this.value)">
+      </td>
+      <td style="text-align:center;">
+        <button class="del-exp-btn" onclick="deleteExpense('${curMonth}', '${item.id}')" title="Delete Entry">🗑️</button>
+      </td>
+    </tr>`;
+  });
+  
+  html += `</tbody>`;
+  table.innerHTML = html;
+}
+
+function updateExpenseField(monthKey, expId, field, value) {
+  const arr = userExp[monthKey];
+  if (!arr) return;
+  const item = arr.find(e => e.id === expId);
+  if (!item) return;
+  
+  if (field === 'amount') {
+    item.amount = parseFloat(value) || 0;
+  } else if (field === 'date') {
+    const newMonthKey = getMonthKeyFromDate(value);
+    if (newMonthKey !== monthKey) {
+      const idx = arr.findIndex(e => e.id === expId);
+      if (idx !== -1) arr.splice(idx, 1);
+      if (arr.length === 0) delete userExp[monthKey];
+      
+      item.date = value;
+      item.m = newMonthKey;
+      if (!userExp[newMonthKey]) userExp[newMonthKey] = [];
+      userExp[newMonthKey].push(item);
+      
+      curMonth = newMonthKey;
+      saveDb();
+      buildMonthTabs();
+      renderExpPage();
+      updateTopChips();
+      updateDashboardKpis();
+      if (syncSettings.url) { syncNow(); }
+      return;
+    } else {
+      item.date = value;
+    }
+  } else {
+    item[field] = value;
+  }
+  
+  saveDb();
+  renderCatBar();
+  renderDailyLine();
+  renderBudgetTable();
+  renderDailyLog();
+  updateTopChips();
+  updateDashboardKpis();
+  
+  if (syncSettings.url) {
+    if (window.syncThrottleTimeout) clearTimeout(window.syncThrottleTimeout);
+    window.syncThrottleTimeout = setTimeout(() => {
+      syncNow();
+    }, 1500);
+  }
 }
 
 function renderCatBar(){
@@ -1852,7 +1986,7 @@ function applyRemoteData(data) {
   syncSettings.lastSync = new Date().toISOString();
   saveDb();
   console.info('[Sync] Remote data pulled successfully and local storage updated.');
-  try { updateSyncStats(); updateTopChips(); updateDashboardKpis(); } catch(_) {}
+  try { updateSyncStats(); updateTopChips(); updateDashboardKpis(); renderExpPage(); } catch(_) {}
 }
 
 /* removed duplicate launchApp and orphaned code block — canonical version is at bottom */
